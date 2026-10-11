@@ -1,83 +1,82 @@
 ---
-title: "Remove Shadows from Scanned Documents on iPhone"
-description: "Learn how to remove unwanted phone and hand shadows from your scanned documents and photos on iPhone and iPad. Get clean, even-lit results."
+title: "How to Remove Shadows from Scanned Documents"
+description: "Remove phone and hand shadows from paper scans on iPhone. Use dedicated filters and edge correction to produce clean, legible PDFs or JPGs."
 slug: remove-shadow-from-scanned-document
 keyword: "remove shadow from scanned document"
 intent: problem_fix
 canonical: https://sanibha.example/guides/remove-shadow-from-scanned-document
-generated_at: 2026-10-11T06:57:41Z
+generated_at: 2026-10-11T09:21:41Z
 ---
 
-# How to Remove Shadows from Scanned Documents
+# How to Remove Shadows from Scanned Documents on iPhone
 
-> **Quick answer:** You can remove shadows from scanned documents on your iPhone or iPad using the Document Scanner & PDF Toolkit app. After scanning, apply the built-in Shadow Removal filter. This filter evens out lighting across the page, specifically targeting dark areas caused by phone or hand shadows, to produce a clean, legible document.
+> **Quick answer:** To remove shadows from a scanned document, photograph the page using Document Scanner & PDF Toolkit and select the Shadow Removal filter. The filter balances exposure across uneven room lighting and clears hand or phone shadows. You can then adjust contrast with Black & White or Auto filters and export the clean PDF.
 
-When you scan a document with your iPhone, unwanted shadows from your hand or phone can appear on the page. This often happens when lighting is uneven, making parts of the document dark and hard to read.
+Capturing a document on a desk often results in an unwanted phone or hand shadow falling across several paragraphs. Overhead office fixtures and bedside lamps cast dark gradients that darken words and cause text to disappear in standard photos.
 
-A dedicated Shadow Removal filter can correct these lighting issues. This page explains how to use Document Scanner & PDF Toolkit to eliminate shadows and achieve a clean, professional scan.
+Built-in mobile cameras compensate for dark scenes across the whole frame, but they struggle when light hits only half of a single sheet of paper. Adjusting basic brightness sliders typically washes out white areas while leaving the shadowed portion gray and unreadable.
 
-This guide focuses on fixing lighting artifacts and shadows. For converting scanned images to editable text, see our guide on /convert-scanned-image-to-text. For basic scanning using built-in iOS tools, visit /scan-document-without-an-app.
-
-
-## How to Remove Shadows from Scans with Document Scanner & PDF Toolkit
-
-1. **Open the app and start a new scan.** Launch Document Scanner & PDF Toolkit on your iPhone or iPad. Tap the camera icon to begin a new scanning session. Position your device over the document.
-2. **Capture the document.** The app uses automatic edge detection to find the page borders and crop the document. Ensure the entire document is visible within the camera frame. Tap the capture button. If scanning multiple pages, continue capturing each one.
-3. **Apply the Shadow Removal filter.** Once the scan is in the editor, tap the 'Shadow Removal' filter from the available enhancement options. This filter evens out the lighting, removing shadows cast by your hand or phone.
-4. **Review and adjust (optional).** Examine the document. If needed, you can try other enhancement filters like 'Black & White' or 'Colour Boost' to further improve legibility. For multi-page scans, apply the filter to each page individually.
-5. **Save and export your clean document.** Once satisfied with the result, tap 'Done' or 'Save'. You can then save your document as a PDF or JPG. Use the share options to send it via AirDrop, Mail, or save it directly to cloud services like iCloud Drive, Google Drive, or Dropbox.
+This guide covers how to fix harsh shadows on paper scans using dedicated enhancement tools, adjust perspective when tilting away from light sources, and export legible documents directly on your iPhone or iPad.
 
 
-## Other Ways to Handle Document Shadows
+## Steps to Clean Document Shadows Using Document Scanner & PDF Toolkit
+
+1. **Frame the page in the camera view.** Hold your device over the document so all four corners are visible. Automatic edge detection will spot the page perimeter, straightens perspective, and crops out surrounding desk surfaces. If direct overhead light causes your hand to block the page, tilt the phone slightly to move the cast shadow; the app automatically corrects the resulting perspective angle.
+2. **Capture the scan.** Take the shot once the border highlights align with the paper edges. Confirm that the automatic crop captures every line of text without clipping headers or footers.
+3. **Apply the Shadow Removal filter.** Select the Shadow Removal filter from the enhancement options. This filter evens out localized lighting imbalances and lifts the dark gradient cast by your device or hands across the text lines.
+4. **Select an enhancement filter for contrast.** Cycle through Auto, Black & White, Grayscale, or Colour Boost to sharpen the letters against the brightened background. For pure black text on white paper, the Black & White filter helps strip away remaining tint variations caused by uneven room bulbs.
+5. **Export the document as a PDF or JPG.** Choose whether to save your corrected page as a PDF or JPG. You can save the file locally on your device, dispatch it via AirDrop or Mail, or store it into iCloud Drive, Google Drive, or Dropbox without watermarks.
+
+
+## Alternative Methods for Handling Document Shadows on iOS
 
 | Method | How | Best for | Limitation |
 |---|---|---|---|
-| **Built-in iOS Notes or Files apps** | The iOS Notes app can scan documents by tapping the camera button and choosing Scan Documents. The iOS Files app offers a similar function by tapping the More (...) button and choosing Scan Documents. | Quick, casual scans where perfect lighting and shadow removal are not critical. | The Notes and Files scanners apply automatic contrast but have no dedicated shadow-removal control. |
-| **Rescan under better lighting** | If a scan has significant shadows, you can try rescanning the document. Move to an area with more even, diffused light, such as near a window, or use multiple light sources to reduce harsh shadows. | Preventing shadows before they occur, when you have control over your scanning environment. | This is not always possible, especially if you need to scan a document on the go or in an environment with poor lighting. |
+| **Built-in iOS Notes App Scanner** | Open a note in the Notes app, tap the camera icon, select Scan Documents, and capture the page under automatic contrast adjustment. | Quick captures under balanced daylight where no harsh shadows fall over the text. | Notes automatically adjusts contrast across the whole image but has no dedicated shadow-removal control to strip out dark phone silhouettes. |
+| **Physical Repositioning and Angled Capture** | Move the physical paper near an indirect light source, or angle your phone away from the overhead bulb to throw the shadow off the page entirely, then crop manually. | Scanning single sheets when you do not want to install extra editing tools. | Tilting without automatic perspective correction can leave text distorted, skewed, or blurred along page borders. |
 
 
-## Document Scanner Features for Fixing Shadows
+## Core Features for Eliminating Scanned Document Shadows
 
-- **Enhancement filters and shadow removal**: The Shadow Removal filter specifically targets and evens out uneven lighting, effectively removing phone or hand shadows from your scanned pages.
-- **Automatic edge detection**: Automatic edge detection precisely crops and straightens your scanned page. This ensures that the corrected, shadow-free document has clean, accurate borders.
-- **Multi-page batch scanning**: Multi-page batch scanning lets you capture many pages in one session. You can then apply the Shadow Removal filter to each page individually to correct shadows across your entire document.
-- **Export and share**: After removing shadows, you can save your clean document as a PDF or JPG and easily share it through various apps or save to cloud storage.
+- **Enhancement filters and shadow removal**: The dedicated Shadow Removal filter specifically targets and neutralizes uneven lighting, erasing hand or phone silhouettes while Auto, Black & White, Grayscale, and Colour Boost filters preserve clear typography.
+- **Automatic edge detection**: Detects page borders in the camera view and automatically crops and straightens skewed pages, allowing you to angle your iPhone away from overhead light bulbs to avoid casting shadows in the first place.
+- **Export and share**: Lets you save shadow-corrected scans immediately to PDF or JPG format and share them through AirDrop, Mail, Files, or cloud providers for free.
 
 
-## Tips for Better Scans and Shadow Control
+## Tips for Preventing and Correcting Harsh Lighting Glare
 
-- Use indirect, diffused lighting: Scan documents in a well-lit room, but avoid direct overhead lights that cast harsh shadows. Natural light from a window, without direct sunlight, is often ideal.
-- Position your phone directly above the document: Hold your iPhone or iPad as flat and centered as possible over the document to minimize self-shadowing.
-- Ensure a contrasting background: Place your document on a flat, plain surface that contrasts with the paper color. This helps the automatic edge detection work better.
-- Clean your camera lens: A dirty lens can cause blurry images or obscure details, making shadows appear worse or harder to correct.
+- Step back slightly and zoom in if your device has optical zoom lenses, which pushes your body and hand shadows outside the paper's capture area.
+- Position paper so overhead light hits it from the side rather than straight from behind your head or shoulders.
+- If working beneath an unmovable desk lamp, angle the device slightly to shift the shadow onto the desk surface; automatic edge detection will straighten the perspective during capture.
+- For multi-page files, check the preview of each page under the Black & White filter to verify that background shadow zones did not cause faint letters to drop out.
 
 
 ## Frequently asked questions
 
-### How do you remove phone and hand shadows from a document photo on iPhone?
+### How do I remove phone and hand shadows from a scanned document?
 
-Use Document Scanner & PDF Toolkit on your iPhone or iPad. After capturing your document, go to the enhancement options and select the 'Shadow Removal' filter. This filter automatically evens out the page's lighting, eliminating dark areas caused by shadows.
+Capture the paper using Document Scanner & PDF Toolkit and select the Shadow Removal filter. This tool balances the exposure across the image, evening out localized dark patches caused by your phone or fingers without washing out the text.
 
-### How does the dedicated Shadow Removal filter differ from regular black-and-white filters?
+### Can I remove shadows without third-party software using built-in iOS tools?
 
-Regular black-and-white filters convert the document to monochrome and increase contrast across the whole page. The 'Shadow Removal' filter specifically analyzes and corrects uneven lighting and dark areas, aiming to make the background consistently bright while preserving text legibility.
+The iOS Notes and Files scanners apply automatic contrast but lack a dedicated shadow-removal tool. If you want to use the native scanner without an extra download, see our guide on how to /scan-document-without-an-app. To lift hand and phone shadows directly from the page, use the Shadow Removal filter in Document Scanner & PDF Toolkit.
 
-### Do Apple Notes or Files have a built-in control to remove shadows?
+### Which enhancement filters work best for uneven room lighting?
 
-No, the built-in scanners in Apple Notes and Files apps apply automatic contrast and basic image adjustments. However, they do not include a dedicated control or filter specifically designed to remove shadows or even out lighting across a document.
+Start with the Shadow Removal filter to flatten uneven gradients across the sheet. Follow this with the Black & White filter to force the lightened paper background to solid white, leaving crisp, dark text.
 
-### What camera positioning and lighting habits prevent shadows before shooting?
+### How does automatic edge detection help perspective correction on angled shots?
 
-To prevent shadows, scan in an area with diffused light, like near a window but out of direct sun. Hold your iPhone or iPad directly above the document, ensuring your hand and device are not casting shadows. You can also try using a secondary light source to balance illumination.
+Automatic edge detection identifies the four corners of your document in the viewfinder, even when you tilt the phone to dodge a light source. It automatically crops out the desk and straightens the perspective so the resulting scan looks like a flat, top-down capture.
 
-### Can you fix uneven lighting across multi-page batch scans?
+### Can I save the shadow-corrected scan directly to PDF or JPG for free?
 
-Yes, after performing a multi-page batch scan in Document Scanner & PDF Toolkit, you can edit each page individually. Apply the 'Shadow Removal' filter to each page that has uneven lighting or shadows to ensure consistent quality throughout the entire document.
+Yes. Exporting your scanned pages to PDF or JPG, sharing through AirDrop, Files, or Mail, and saving directly to cloud services like iCloud Drive, Google Drive, and Dropbox are completely free features.
 
 
-## Get Cleaner Scans, Free of Shadows
+## Clear Shadows from Your Scans Today
 
-Download Document Scanner & PDF Toolkit for iOS to use the Shadow Removal filter and other tools to get professional-looking document scans every time.
+Download Document Scanner & PDF Toolkit for iOS to straighten angled shots, remove phone shadows, and export clean PDFs.
 
 [Get Document Scanner & PDF Toolkit on the App Store](https://apps.apple.com/app/id0000000000)
 
@@ -85,6 +84,6 @@ Download Document Scanner & PDF Toolkit for iOS to use the Shadow Removal filter
 ## Related guides
 
 - [Convert Scanned Image to Text on iPhone](convert-scanned-image-to-text.md)
-- [How to Scan Documents on iPhone Without an App](scan-document-without-an-app.md)
+- [Scan Documents Without an App on iPhone](scan-document-without-an-app.md)
 - [Compress PDF File Size Free on iPhone and iPad](compress-pdf-file-size-free.md)
-- [Scan a Passport Photo for Visa Application on iPhone](scan-passport-photo-for-application.md)
+- [How to Scan a Receipt on iPhone Clearly](scan-receipt-on-iphone.md)

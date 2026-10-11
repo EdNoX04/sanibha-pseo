@@ -61,7 +61,17 @@ class Usage:
     retries: int = 0
     by_task: dict = field(default_factory=dict)
 
+    def __post_init__(self):
+        self._lock = threading.Lock()
+
+    def as_dict(self) -> dict:
+        return {k: v for k, v in vars(self).items() if not k.startswith("_")}
+
     def add(self, task: str, inp: int, out: int) -> None:
+        with self._lock:
+            self._add(task, inp, out)
+
+    def _add(self, task: str, inp: int, out: int) -> None:
         self.calls += 1
         self.input_tokens += inp
         self.output_tokens += out
@@ -92,7 +102,8 @@ class Provider:
         self.usage = Usage()
 
     def generate(self, *, task: str, model: str, system: str, prompt: str,
-                 schema: Type[T], temperature: float, context: dict | None = None) -> T:
+                 schema: Type[T], temperature: float, context: dict | None = None,
+                 thinking: str | None = None) -> T:
         raise NotImplementedError
 
     def embed(self, texts: list[str], *, model: str) -> np.ndarray:
@@ -106,7 +117,7 @@ class GeminiProvider(Provider):
     RETRYABLE = {408, 429, 500, 502, 503, 504}
 
     def __init__(self, api_key: str | None = None, rpm: int = 8, max_retries: int = 6,
-                 timeout_s: int = 180):
+                 timeout_s: int = 180, embed_rpm: int = 60):
         super().__init__()
         from google import genai  # imported lazily so mock runs don't need the SDK
         from google.genai import types
@@ -116,11 +127,40 @@ class GeminiProvider(Provider):
             raise LLMError("GEMINI_API_KEY is not set")
         # A hard per-request timeout: an unattended job must never hang on one stuck call.
         self.client = genai.Client(api_key=key, http_options=types.HttpOptions(timeout=timeout_s * 1000))
+        # separate budgets: embedding quota is far larger than generation quota, so embeds must
+        # not queue behind (or use up) the scarce generation slots
+        # Gemini quotas are per model, so each model gets its own limiter: the writer
+        # (3.8-flash) and the editor (3.5-flash) do not queue behind each other.
+        self.rpm = rpm
+        self._limiters: dict[str, RateLimiter] = {}
+        self._limiters_lock = threading.Lock()
         self.limiter = RateLimiter(rpm)
+        self.embed_limiter = RateLimiter(embed_rpm)
         self.max_retries = max_retries
         self.exhausted: set[str] = set()
-        self.has_fallback = False
-        self.last_model: str | None = None
+        self._tls = threading.local()   # per-thread call state: pages are generated in parallel
+
+    @property
+    def has_fallback(self) -> bool:
+        return getattr(self._tls, "has_fallback", False)
+
+    @has_fallback.setter
+    def has_fallback(self, v: bool) -> None:
+        self._tls.has_fallback = v
+
+    @property
+    def last_model(self) -> str | None:
+        return getattr(self._tls, "last_model", None)
+
+    @last_model.setter
+    def last_model(self, v: str | None) -> None:
+        self._tls.last_model = v
+
+    def _limiter_for(self, model: str) -> RateLimiter:
+        with self._limiters_lock:
+            if model not in self._limiters:
+                self._limiters[model] = RateLimiter(self.rpm)
+            return self._limiters[model]
 
     def _models(self, spec: str) -> list[str]:
         """'a,b' -> try a, fall back to b once a's daily quota is gone (remembered for the run)."""
@@ -130,14 +170,14 @@ class GeminiProvider(Provider):
             raise QuotaExhausted(f"all models exhausted: {models}")
         return live
 
-    def generate(self, *, task, model, system, prompt, schema, temperature, context=None):
+    def generate(self, *, task, model, system, prompt, schema, temperature, context=None, thinking=None):
         last: Exception | None = None
         models = self._models(model)
         for i, m in enumerate(models):
             self.has_fallback = i < len(models) - 1
             try:
                 out = self._generate_one(task=task, model=m, system=system, prompt=prompt,
-                                         schema=schema, temperature=temperature)
+                                         schema=schema, temperature=temperature, thinking=thinking)
                 self.last_model = m
                 return out
             except QuotaExhausted as e:
@@ -149,12 +189,12 @@ class GeminiProvider(Provider):
                 last = e
         raise last or QuotaExhausted(model)
 
-    def _call(self, fn, what: str):
+    def _call(self, fn, what: str, limiter: RateLimiter | None = None):
         from google.genai import errors as gerrors
 
         day_429s = 0
         for attempt in range(self.max_retries + 1):
-            self.limiter.wait()
+            (limiter or self.limiter).wait()
             try:
                 return fn()
             except gerrors.APIError as e:  # covers ClientError / ServerError
@@ -187,20 +227,26 @@ class GeminiProvider(Provider):
                 time.sleep(min(60, 2 ** attempt * 2))
         raise LLMError(f"{what}: exhausted retries")
 
-    def _generate_one(self, *, task, model, system, prompt, schema, temperature):
+    def _generate_one(self, *, task, model, system, prompt, schema, temperature, thinking=None):
         from google.genai import types
 
+        extra = {}
+        # thinking: "low" = fast drafts / judging; None = the model's default (deeper) reasoning.
+        # Older models that don't know thinking_level just get no thinking config.
+        if thinking and not model.startswith("gemini-2"):
+            extra["thinking_config"] = types.ThinkingConfig(thinking_level=thinking)
         config = types.GenerateContentConfig(
             system_instruction=system,
             temperature=temperature,
             response_mime_type="application/json",
             response_schema=schema,
+            **extra,
         )
         last_err = None
         for parse_attempt in range(2):  # one extra try if the JSON doesn't validate
             resp = self._call(
                 lambda: self.client.models.generate_content(model=model, contents=prompt, config=config),
-                f"{task}/{model}",
+                f"{task}/{model}", self._limiter_for(model),
             )
             um = getattr(resp, "usage_metadata", None)
             self.usage.add(task, getattr(um, "prompt_token_count", 0) or 0,
@@ -237,7 +283,7 @@ class GeminiProvider(Provider):
                     model=model, contents=chunk,
                     config=types.EmbedContentConfig(task_type="SEMANTIC_SIMILARITY", output_dimensionality=768),
                 ),
-                f"embed/{model}",
+                f"embed/{model}", self.embed_limiter,
             )
             self.usage.embed_calls += 1
             out.extend(e.values for e in resp.embeddings)
@@ -260,27 +306,41 @@ class MockProvider(Provider):
 
     name = "mock"
 
-    def __init__(self, misbehave: str | None = None):
+    def __init__(self, misbehave: str | None = None, latency: dict | None = None):
+        """latency: simulated seconds per task, e.g. {"write": 2.0, "judge": 0.5} - used by the
+        benchmark to measure scheduling and call-count effects without spending API quota."""
         super().__init__()
         self.misbehave = misbehave
+        self.latency = latency or {}
         self._writes: dict[str, int] = {}
+        self._wlock = threading.Lock()
 
     def embed(self, texts, *, model):
         self.usage.embed_calls += 1
-        dim = 256
+        if self.latency.get("embed"):
+            time.sleep(self.latency["embed"])
+        dim = 1024
         out = np.zeros((len(texts), dim), dtype=np.float32)
         for i, t in enumerate(texts):
             for w in t.lower().split():
                 out[i, _h(w) % dim] += 1.0
         return out / np.linalg.norm(out, axis=1, keepdims=True).clip(min=1e-9)
 
-    def generate(self, *, task, model, system, prompt, schema, temperature, context=None):
+    def generate(self, *, task, model, system, prompt, schema, temperature, context=None, thinking=None):
         ctx = context or {}
         self.usage.add(task, len(prompt) // 4, 600)
+        lat = self.latency.get(task, 0)
+        if lat:
+            time.sleep(lat * (0.35 if thinking == "low" else 1.0))
         if task == "plan":
             return self._plan(ctx, schema)
         if task in ("write", "revise"):
             return self._write(ctx, schema, revise=(task == "revise"))
+        if task == "patch":
+            from .models import PageContent
+
+            full = self._write(ctx, PageContent, revise=True)
+            return schema(**{f: getattr(full, f) for f in schema.model_fields})
         if task == "judge":
             return schema(specificity=5, usefulness=4, accuracy_risk=5, swap_test="pass", problems=[])
         raise LLMError(f"mock: unknown task {task}")
@@ -313,8 +373,9 @@ class MockProvider(Provider):
         from .models import CTA, FAQ, Alternative, FeaturePoint, Step
 
         rec, brief, app = ctx["record"], ctx["brief"], ctx["app"]
-        n = self._writes.get(rec.slug, 0)
-        self._writes[rec.slug] = n + 1
+        with self._wlock:
+            n = self._writes.get(rec.slug, 0)
+            self._writes[rec.slug] = n + 1
         kw = rec.keyword
         rnd = random.Random(_h(rec.slug) + n)
         dup = self.misbehave == "duplicate" and not revise
@@ -362,5 +423,6 @@ def make_provider(cfg) -> Provider:
         return MockProvider(misbehave=os.environ.get("PSEO_MOCK_MISBEHAVE"))
     if name == "gemini":
         return GeminiProvider(rpm=cfg["llm"]["requests_per_minute"], max_retries=cfg["llm"]["max_retries"],
+                              embed_rpm=cfg["llm"].get("embed_requests_per_minute", 60),
                               timeout_s=cfg["llm"]["request_timeout_s"])
     raise LLMError(f"unknown provider {name}")

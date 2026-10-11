@@ -10,7 +10,9 @@ KEYWORD DATA:
 {% endif %}
 SIBLING PAGES (already exist or are being written; do not duplicate them, link instead):
 {% for s in siblings %}- /{{ s.slug }}: "{{ s.keyword }}" (owns: {{ s.angle }})
-{% endfor %}
+{% if s.headings %}  its sections: {{ s.headings | join(" / ") }}
+{% endif %}{% if s.faqs %}  its FAQ questions (already answered there, do NOT ask them again in any wording): {{ s.faqs | join(" | ") }}
+{% endif %}{% endfor %}
 
 SECTION REQUIREMENTS:
 - title: <= 60 characters, contains the core of the keyword, written for a human click (no pipes, no brand stuffing).

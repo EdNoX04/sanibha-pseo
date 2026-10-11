@@ -73,6 +73,10 @@ def write_report(store, cfg, run_id: int, result: dict, stats: dict) -> None:
              f"{u.get('embed_calls', 0)} embed calls, {u.get('input_tokens', 0):,} input / "
              f"{u.get('output_tokens', 0):,} output tokens, {u.get('retries', 0)} retries")
     L.append(f"- **Counts:** " + ", ".join(f"{k}={v}" for k, v in stats.items()))
+    if result.get("timings"):
+        L.append("- **Time per stage (s):** " + ", ".join(f"{k} {v}" for k, v in result["timings"].items()))
+    L.append(f"- **Workers:** {cfg['pipeline']['workers']} (siblings never in flight together) · "
+             f"thinking: {cfg['llm'].get('thinking')}")
     L.append(f"- **Published pages in corpus:** {len(corpus)}")
     L.append("")
     if result.get("problems"):

@@ -17,7 +17,7 @@ An agent pipeline that turns a keyword list into unique, publishable landing pag
 ./run.sh add "scan receipts to Excel" --run        # add a keyword (and generate it now)
 ./run.sh replace "old keyword" "new keyword" --run # swap one; the old page is retired
 ./run.sh remove "scan receipts to Excel" --run     # remove one; its page is retired
-./run.sh test                 # offline test suite (mock LLM, no key needed): 21 tests
+./run.sh test                 # offline test suite (mock LLM, no key needed): 23 tests
 ./run.sh run                  # incremental: only new/changed keywords (prompts for GEMINI_API_KEY if unset)
 ./run.sh run --force          # regenerate every page
 ./run.sh render               # re-render HTML/MD + report from stored state, no LLM calls
@@ -28,26 +28,42 @@ If `./run.sh` reports "permission denied" after cloning, run `chmod +x run.sh` o
 
 ## Results from the real run
 
-All 12 keywords, exactly as given, were published by `gemini-3.8-flash` (writer and planner) and checked by `gemini-3.5-flash` (editor). No manual edits.
+The published pages come from run #9, the current architecture: all 12 keywords exactly as given, written in parallel by `gemini-3.8-flash` (with `gemini-3.7-flash` as fallback when it was overloaded), checked by the code gates and by a separate editor model. No manual edits.
 
 | | |
 |---|---|
 | Pages published / quarantined | **12 / 0** |
-| Length | 960–1,282 words per page |
-| Editor scores (specificity / usefulness / accuracy, 1–5) | every page 4–5 on all three; every page passes the swap test |
-| Highest 5-gram text overlap between any two pages | **0.018** Jaccard (mean 0.006; gate 0.12) |
-| Verbatim shared sentences | **1** sentence in the whole corpus (gate: max 1 per page) |
-| Highest semantic similarity between two pages | 0.929 cosine: *OCR handwriting iPhone* ↔ *convert scanned image to text*, the pair clustering flagged before writing (mean 0.85; gate 0.93) |
-| Highest FAQ-question similarity across pages | 0.928 (gate 0.93; two true duplicates at 0.95 were caught and rewritten) |
-| Drafts rejected and revised | 9: 8 by the QA gates and editor, 1 by the corpus sweep. Reasons included an invented "OCR button" and filter menu, a "guaranteed" claim, filler ("seamless", "As a student…"), two sentences copied from other pages, a too-long meta description, semantic overlap with a sibling page, and two duplicated FAQ questions |
+| Run time, all 12 pages | **232 s** (plan 49 s, write + check 182 s) |
+| Generation calls | **28**: 1 plan, 12 drafts, 3 targeted patches, 12 editor reviews, **0 full rewrites** |
+| Editor scores (specificity / usefulness / accuracy, 1–5) | **5/5/5 on every page**; every page passes the swap test |
+| Highest 5-gram text overlap between any two pages | **0.015** Jaccard (mean 0.004; gate 0.12) |
+| Verbatim shared sentences | **0** in the whole corpus |
+| Highest semantic similarity between two pages | 0.930 cosine: *OCR handwriting iPhone* ↔ *convert scanned image to text*, the pair clustering flagged before writing (mean 0.85; gate 0.93) |
+| Highest FAQ-question similarity across pages | 0.923 (gate 0.93) |
+| Drafts rejected and fixed | 3, all by **patching one field**: a banned filler word ("seamless") in the feature list, and two FAQ questions that repeated a sibling page's |
+| Length | 878–1,095 words per page |
 
-What happened across runs (all logged in `output/report.md`):
+### Before and after the architecture upgrade
 
-1. The free tier's **daily quota ran out mid-run**. The circuit breaker stopped after 3 failures and recorded the 3 unwritten pages as `failed`. The next run regenerated **only those 3**.
-2. While reviewing output I found the Word page calling desktop Word "free". I corrected **one fact** in `data/platform_facts.yaml`, and the next run regenerated **only that one page**, because only its brief used that fact.
-3. I then added FAQ-level duplicate detection. The corpus sweep found two FAQ questions shared by the OCR and image-to-text pages and revised **only the newer page**.
+The first version (v1) generated pages one at a time and answered every failure with a full rewrite. Run #9 is v2. The same 12 keywords, same models, same gates:
 
-Before the final run, a development run also showed the editor catching a template flaw: the *scan document without an app* page told readers to install the app (specificity 3, usefulness 2). The fix was to make the steps section follow intent (see below). That run's state was reset when the prompts changed, so it isn't in the report.
+| | v1 (runs #1–#6) | v2 (run #9) |
+|---|---|---|
+| Time for 12 pages | ≈ 15 min (≈ 75 s per page, sequential; measured in runs #1 and #3) | **3.9 min** |
+| Generation calls per page | ≈ 3 | **2.3** |
+| Tokens (input / output) for 12 pages | ≈ 158k / 42k (run #3's per-page rate × 12) | **97k / 27k** (−39% / −36%) |
+| Fix strategy | 9 full rewrites | 3 one-field patches, 0 rewrites |
+| Editor scores | 4–5 | 5/5/5 everywhere |
+| Max shared wording / max meaning similarity | 0.018 / 0.929 | 0.015 / 0.930 |
+
+What changed, and why, is in [Speed and efficiency](#speed-and-efficiency). A simulated benchmark that isolates each change is in [`docs/BENCHMARK.md`](docs/BENCHMARK.md).
+
+What the system handled on its own across runs (all logged in `output/report.md`):
+
+1. The free tier's **daily quota ran out mid-run** (run #1). The circuit breaker stopped after 3 failures, still published what had passed, and the next run regenerated **only the 3 missing pages**. In run #9 the editor model's quota ran out again; that call fell back to the next model in the chain and the run carried on.
+2. While reviewing output I found the Word page calling desktop Word "free". I corrected **one fact** in `data/platform_facts.yaml`, and the next run regenerated **only that one page**, because only its brief cited that fact.
+3. When FAQ-level duplicate detection was added, the corpus sweep found two FAQ questions shared by the OCR and image-to-text pages and revised **only the newer page**.
+4. In development the editor caught a template flaw: the *scan document without an app* page told readers to install the app (specificity 3, usefulness 2). The fix was to make the steps section follow search intent.
 
 ## How it works
 
@@ -64,28 +80,33 @@ data/platform_facts.yaml   iOS / third-party facts for the "other ways" section
  3 PLAN      LLM, one call per sibling batch → PageBrief per keyword: search intent, unique
              angle, questions to answer, which page OWNS each shared subtopic, facts to use
  4 WRITE     LLM, structured JSON → PageContent in the fixed 10-section template, grounded only
-             in the facts its brief selected
+             in the facts its brief selected; the prompt lists the siblings' published headings
+             and FAQ questions so overlap is avoided up front. Up to 4 pages in parallel, never
+             two siblings at once. Fast first draft (low reasoning effort).
  5 QA        rules: length, SEO fields, keyword coverage, banned filler, over-claims,
                     Pro-feature-called-free, generic headings
-             duplicate gates vs the WHOLE published corpus: 5-gram Jaccard, verbatim sentences,
-                    page embedding cosine, FAQ-question cosine, near-duplicate titles/metas
+             duplicate gates vs an in-memory index of the WHOLE published corpus: 5-gram Jaccard,
+                    verbatim sentences, page embedding cosine, FAQ-question cosine, titles/metas
+             every error is tagged with the field it lives in
              LLM editor (a different model): specificity, usefulness, accuracy, swap test
-               └─ any failure → the exact errors go back to the writer → 4 (max 2 revisions)
-                  → still failing → QUARANTINE: not published, alerted
- 6 SWEEP     all-pairs check of the final corpus; the newer page of any violating pair is revised
+               ├─ field-local errors  → 4b PATCH only those fields (small, fast call) → re-check
+               ├─ page-level / editor → full REWRITE with the reasons (deeper reasoning) → re-check
+               └─ still failing after 3 fixes → QUARANTINE: not published, alerted
+ 6 SWEEP     vectorised all-pairs check of the final corpus; the newer page of a clashing pair
+             is revised (FAQ-only clash → patch)
  7 RENDER    HTML (canonical, HowTo + FAQPage JSON-LD), Markdown, JSON, index, sitemap
  8 REPORT    report.md + similarity.csv + run history; alerts, heartbeat, exit code
              state: SQLite (pages, input hashes, shingles, embeddings, runs, events)
 ```
 
-This is an agent rather than a prompt in a loop because each draft is measured, and the specific failures go back to the model as instructions. For example, *"semantically too close to /ocr-handwriting-iphone (cosine 0.935). That page already covers: … Rebuild the steps, tips and FAQs around this page's own angle: …"*. The loop runs until the page passes or is held back.
+This is an agent rather than a prompt in a loop because each draft is measured, and the specific failures go back to the model as instructions, routed by kind: a duplicated FAQ question gets a patch of the `faqs` field; *"semantically too close to /ocr-handwriting-iphone (cosine 0.935). That page already covers: … Rebuild the steps, tips and FAQs around this page's own angle: …"* gets a full rewrite. The loop runs until the page passes or is held back.
 
 ## Stack and why
 
 | Choice | Why it fits this problem |
 |---|---|
 | **Python** | Mature LLM SDKs, text processing and numerics in one language, and an easy test harness. |
-| **Gemini** (`gemini-3.8-flash` writer/planner, `gemini-3.5-flash` editor, `gemini-embedding-001`) | Structured output validated against pydantic schemas, embeddings from the same vendor, and a free tier for development. The editor is a different model from the writer, so it doesn't share the writer's blind spots. Each role is a **fallback chain** in `config.yaml`: if a model is overloaded (503/504, timeout) or out of daily quota, the call moves to the next model. Only `llm.py` is vendor-specific. |
+| **Gemini** (`gemini-3.8-flash` writer/planner, `gemini-3.5-flash` editor, `gemini-embedding-001`) | Structured output validated against pydantic schemas, embeddings from the same vendor, a free tier for development, and a per-request **reasoning-effort** control (`thinking_level`) that the pipeline sets per role. The editor is a different model from the writer, so it doesn't share the writer's blind spots, and because quotas are per model, the two don't compete for the same rate limit. Each role is a **fallback chain** in `config.yaml`: if a model is overloaded (503/504, timeout) or out of daily quota, the call moves to the next model. Only `llm.py` is vendor-specific. |
 | **Pydantic schemas** | The page is typed data, not an HTML blob. Each section can be checked on its own, and malformed model output is retried, never rendered. |
 | **Jinja2 templates** | Presentation is separate from content: a template change re-renders all pages with `pseo render` and no LLM calls. |
 | **SQLite state** | A scheduled job needs memory: what's published, from which inputs, and the shingles and embeddings of every page for corpus-wide checks. Zero ops at this scale, and the `Store` interface is small enough to move to Postgres. |
@@ -105,6 +126,7 @@ Duplicate content is the main risk, so it is handled at every stage rather than 
 * Steps follow **intent**: the *without an app* page walks through the built-in Files/Notes scanner, and the *best free scanner* page is an evaluation checklist. The editor caught the original version of the template forcing app steps onto every page.
 * The *alternatives* and *tips* sections are where tasks really differ (iOS has Markup for signing but nothing for PDF compression; thermal receipts fade; cursive defeats OCR).
 * The writer only sees the facts its brief selected.
+* **Prevention before detection:** the writer prompt lists every sibling's published section headings and FAQ questions, marked "already answered there, do not ask again in any wording". In v1, 3 of 8 rejections were a sibling overlap; in run #9, 9 of 12 first drafts passed every gate.
 
 **4. Measured gates against the whole corpus**, not just the current run:
 
@@ -123,21 +145,51 @@ Thresholds were calibrated on real output. Across 1,705 cross-page FAQ pairs, th
 * `test_duplicate_drafts_are_caught_and_revised`: the mock LLM writes the same body for every page. QA rejects them all and the revise loop fixes them.
 * `test_unfixable_page_is_quarantined_not_published`: the writer ignores feedback, so only one page is published and the run reports itself as degraded.
 * `test_quality_gates_on_a_single_page`: over-claims, filler, Pro-as-free, generic headings and a duplicated FAQ are each detected.
+* `test_field_local_errors_are_patched_not_rewritten`: a page whose only problem is a too-long meta description gets one patch of that field and no full rewrite.
+* `test_parallel_scheduler_is_faster_and_never_runs_siblings_together`: with slow mock calls, 4 workers beat 1, and a spy on the scheduler confirms no two pages that share territory were ever in flight at the same time.
+
+## Speed and efficiency
+
+Profiling the v1 runs showed where the time went: pages were written one at a time (≈ 40 s per draft, most of it the model "thinking"), every failure triggered a full-page rewrite even when one FAQ question was the problem, and embedding calls queued behind generation calls in a single rate limiter. Six changes, each measured:
+
+| Change | Why | Effect |
+|---|---|---|
+| **Sibling-aware parallel workers** (`pipeline._schedule`, `workers: 4`) | Pages are independent except for siblings, which must see each other's final text. A scheduler runs 4 pages at once but never two pages that share territory; the corpus sweep still catches anything that slips through. | ≈ 2.7× faster on its own (benchmark) |
+| **Reasoning effort per role** (`llm.thinking`) | Measured on the same prompt: 3.1 s with `thinking_level: low` vs 9.1 s at the default. First drafts, patches and the editor run low (their output is checked anyway); planning and full rewrites, where quality is decided, keep the deeper default. | ≈ 1.8× faster on top; editor scores stayed 5/5/5 |
+| **Targeted patches** (`agents.patch`, `prompts/patch.md`) | QA tags every error with the field it lives in. If all errors are field-local (an FAQ, the meta description, a banned word), only those fields are rewritten and merged back. | Run #9: 3 patches of ≈ 5 s, 0 full rewrites; v1 needed 9 rewrites |
+| **Prevent instead of repair** (`write.md`) | The writer now sees each sibling's published section headings and FAQ questions. In v1, 3 of 8 rejections were overlap with a sibling. | Run #9: 9 of 12 first drafts passed every gate |
+| **In-memory corpus index** (`index.py`) | v1 rebuilt the corpus from SQLite for every check. The index holds shingles, sentence sets, vectors and FAQ vectors once, updates on save, and answers meaning-similarity with one matrix product. Above 2,000 pages, candidates come from MinHash-LSH (now vectorised with numpy) plus nearest neighbours. | ≈ 6 ms per check at 12 pages; ≈ 250 ms at 500 pages, exact all-pairs |
+| **Cheaper plumbing** | Per-model rate limiters (writer and editor quotas are separate), a separate embedding limiter, keyword embeddings cached in SQLite (an unchanged daily run makes no embedding call), and batches of keywords planned concurrently (≈ 45 planning calls at 500 keywords). | Removes queueing that did no work |
+
+The architecture benchmark ([`docs/BENCHMARK.md`](docs/BENCHMARK.md), `scripts/benchmark.py`) replays the real pipeline against the offline mock with latencies measured from the live runs, so each change can be isolated without spending quota:
+
+| Configuration (12 brief keywords) | Estimated time | Generation calls |
+|---|---|---|
+| v1: sequential, full rewrites, default reasoning | 17.5 min | 35 |
+| + 4 sibling-aware workers | 6.5 min | 35 |
+| + targeted patches | 6.2 min | 35 (8 rewrites become patches) |
+| + reasoning effort per role (v2) | **3.5 min** | 35 |
+
+The real run (#9) took 3.9 min, close to the benchmark's 3.5.
+
+**Trade-off I accepted:** low-effort first drafts are about 11% shorter (958 words on average vs 1,073 in v1). They still sit well inside the 650–1,600 gate and every page scored 5/5/5 with the editor. Setting `writer_draft: ""` in `config.yaml` trades the speed back for length.
 
 ## Scaling to 500+ keywords without reading every page
 
 * **Gates replace reviewers.** The same checks run on page 12 and page 5,000, and only passing pages publish. Humans look at the quarantine folder and the report's most-similar pairs, which is a handful of pages rather than 500.
-* **Constant-size prompts.** The planner sees at most `plan_batch_size` sibling keywords plus each one's nearest published neighbours, never the whole corpus.
-* **Cheap duplicate checks.** Below 2,000 pages every pair is compared exactly (milliseconds). Above that, candidates come from MinHash-LSH (`similarity.py`, about 93% recall at Jaccard 0.2) plus each page's nearest embedding neighbours.
+* **Constant-size prompts.** The planner sees at most `plan_batch_size` sibling keywords plus each one's nearest published neighbours, never the whole corpus. Batches are planned concurrently.
+* **Cheap duplicate checks.** Every check runs against the in-memory `CorpusIndex`, not the database. Below 2,000 pages every pair is compared exactly (≈ 250 ms per check at 500 pages). Above that, candidates come from vectorised MinHash-LSH (`similarity.py`, about 93% recall at Jaccard 0.2) plus each page's 25 nearest embedding neighbours, so a check costs the same at page 5,000 as at page 500.
+* **Tested at 500.** The benchmark generates 500 synthetic keywords end to end through the real pipeline (mock LLM): **500 published, 0 quarantined, 1,348 generation calls** (45 plans, 500 drafts, 166 patches, 137 rewrites, 500 editor reviews), 0 sweep clashes. At the measured per-call latencies that is ≈ 36 min of API time with 8 workers, versus ≈ 4.9 h sequentially. Details in [`docs/BENCHMARK.md`](docs/BENCHMARK.md).
 * **Exact incremental regeneration.** Each page stores a hash of its real inputs: keyword record, app fact sheet, **only the platform facts its brief uses**, prompt templates, and primary model names. Adding 50 keywords generates 50 pages, and editing one fact regenerates only the pages that use it (demonstrated above). Adding a fallback model regenerates nothing.
 * **Multi-app.** `keywords.csv` has an `app_id` column and each app has its own fact sheet, so the whole portfolio runs through one pipeline.
-* **Cost.** Measured at about 13k input and 3.5k output tokens per page, roughly 3 generate calls per page (plan share + write + editor + ~0.75 revisions) and 1–2 embedding calls. The free tier allows only about 20 requests per day per model, which is fine for development but not for 500 pages a day. Production needs a paid key; nothing else changes. `max_new_pages_per_run` caps any single run's spend.
+* **Cost.** Run #9 measured about 8k input and 2.3k output tokens per page and 2.3 generation calls per page (plan share + draft + editor + ~0.25 patches) plus 1–2 embedding calls; the 500-keyword benchmark, with a pessimistic failure mix, needs 2.7. The free tier allows only about 20 requests per day per model, which is fine for development but not for 500 pages a day. Production needs a paid key; nothing else changes. `max_new_pages_per_run` caps any single run's spend.
+* **Next step at volume: Gemini Batch Mode.** For a nightly job that doesn't need answers in seconds, batch requests cost 50% less (24 h turnaround target). I probed it with this key and the free tier rejects it (`400 FAILED_PRECONDITION`), so it is recommended rather than wired in; the draft and editor calls of a run would be the two batches.
 
 ## Running unattended
 
 * **Schedule:** `.github/workflows/pseo.yml` runs the tests on every push and generation daily, plus a manual trigger with an optional `--force`. The API key, alert webhook and heartbeat URL are GitHub Secrets and are never stored in the repo.
 * **Safe to re-run and resume:** runs are incremental by input hash. An exclusive file lock (released by the OS if the process dies) plus Actions `concurrency` mean runs never overlap. A killed run is marked `aborted` at the next start.
-* **Resilient calls:** a client-side rate limiter, a 180 s hard timeout per request, retries with backoff that honour the server's `retryDelay`, and model fallback on overload or daily quota.
+* **Resilient calls:** a client-side rate limiter per model (writer and editor quotas are separate) plus one for embeddings, a 180 s hard timeout per request, retries with backoff that honour the server's `retryDelay`, and model fallback on overload or daily quota.
 * **Contained failures:** a failing page is recorded as `failed` and the run continues. Three consecutive failures (revoked key, all quota gone) trip a **circuit breaker**: generation stops, but pages that passed are still published and the report is still written. The breaker fired for real in run #1 when the daily quota ran out (`tests/test_circuit_breaker_stops_but_still_publishes` covers it).
 * **Would we know if it broke?** Three failure modes, three signals:
   1. **Crash or abort:** exit code 1, webhook alert (Slack/Discord) with the reason, heartbeat `/fail`, failed Actions job (GitHub emails the owner).
@@ -151,9 +203,21 @@ Thresholds were calibrated on real output. Across 1,705 cross-page FAQ pairs, th
 * **The app fact sheet is assumed.** `data/apps/doc-scanner.yaml` was written from the brief's one-line description. Its features, and which ones are Pro, are placeholders. Pages only claim what's in that file, so dropping in Sanibha's real sheet and re-running regenerates every page.
 * **Competitors aren't covered.** The *best free PDF scanner app* page compares the app with built-in iOS tools and generic categories, not named competitor apps. The pipeline has no verified competitor facts and is told not to invent them. A vetted competitor fact file would slot in like `platform_facts.yaml`.
 * **The editor is an LLM.** It caught real problems (invented UI, filler, intent mismatch) but can be wrong in either direction. That's why it is one gate among several measurable ones, not the only one.
-* **Thresholds were calibrated on 12 pages.** The closest pair sits at 0.929 against a 0.93 gate: these two keywords overlap in meaning, and the pages are differentiated (handwriting vs printed text) but close. At 500 pages, the report's similarity distribution would be used to re-tune thresholds, and keyword pairs like this would be candidates for merging.
+* **Thresholds were calibrated on 12 pages.** The closest pair sits at 0.930 against a 0.93 gate: these two keywords overlap in meaning, and the pages are differentiated (handwriting vs printed text) but close. At 500 pages, the report's similarity distribution would be used to re-tune thresholds, and keyword pairs like this would be candidates for merging.
 * **No keyword research inputs.** Search volume, difficulty and SERP analysis would be the next input; SERP data would let the planner target gaps in what currently ranks.
+* **The speed benchmark is a simulation.** It replays the real pipeline against the mock with latencies measured from live runs; the real run #9 (3.9 min) landed close to its 3.5 min estimate, but the 500-keyword figures are estimates, not a live 500-page run, which the free tier can't support.
+* **Low-effort drafts are shorter** (≈ 11%, see above), a deliberate speed/length trade.
+* **Prompt caching is not exploited.** Gemini's implicit cache needs a shared prompt prefix of at least 4,096 tokens on current Flash models. The writer's system prompt is kept short on purpose (only the facts its brief cites, which also makes regeneration exact), so it sits below that. At paid volume an explicit cache of the full fact sheet is an option; it trades against fact-scoped prompts.
 * **Publishing to a CMS, Search Console and indexing are out of scope** per the brief. The output (static HTML/Markdown/JSON plus a sitemap) is what a CMS importer would consume.
+
+## Research behind the design
+
+The v2 changes came from profiling the v1 runs and from these sources:
+
+* **Google Search, [spam policies: scaled content abuse](https://developers.google.com/search/docs/essentials/spam-policies#scaled-content)** and **[creating helpful, reliable, people-first content](https://developers.google.com/search/docs/fundamentals/creating-helpful-content).** Generating many pages is not itself the violation; generating many pages that add no value is. This is why every page has its own brief, scenario and grounded facts, why the editor runs a swap test, and why failing pages are quarantined rather than published.
+* **Anthropic, [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents).** The pipeline is a fixed workflow rather than an autonomous agent, using three of the patterns described there: *parallelization* (independent pages run concurrently), *routing* (field-local failures go to a patch, page-level ones to a rewrite) and *evaluator-optimizer* (measured gates and an editor feed specific failures back to the writer).
+* **Gemini API docs: [thinking](https://ai.google.dev/gemini-api/docs/thinking), [structured output](https://ai.google.dev/gemini-api/docs/structured-output), [Batch Mode](https://ai.google.dev/gemini-api/docs/batch-mode), [context caching](https://ai.google.dev/gemini-api/docs/caching).** Basis for per-role `thinking_level`, schema-validated output and dynamic patch schemas, the Batch Mode recommendation, and the caching trade-off above.
+* **Leskovec, Rajaraman and Ullman, [*Mining of Massive Datasets*](http://www.mmds.org/), ch. 3.** MinHash and banded LSH for finding near-duplicate documents without comparing every pair.
 
 ## Repository layout
 
@@ -163,15 +227,17 @@ run.sh                       one-command runner
 data/keywords.csv            input keywords (+ app_id)
 data/apps/doc-scanner.yaml   app fact sheet (grounding)
 data/platform_facts.yaml     iOS / third-party facts for the alternatives section
-prompts/                     system, plan, write (+ revision), editor prompts
+prompts/                     system, plan, write (+ revision), patch, editor prompts
 templates/                   page.html.j2, page.md.j2
 src/pseo/
   keywords.py   1  rules → KeywordRecord
   cluster.py    2  merge / siblings / link candidates
-  agents.py   3-5  planner, writer/reviser, editor
+  agents.py   3-5  planner, writer/reviser, field patcher, editor
   quality.py    5  QA gates
-  similarity.py    shingles, sentences, MinHash-LSH, cosine
-  pipeline.py      orchestration, revise loop, sweep, circuit breaker, incremental hashing
+  similarity.py    shingles, sentences, vectorised MinHash-LSH, cosine
+  index.py         in-memory corpus index used by every duplicate check
+  pipeline.py      orchestration, sibling-aware parallel scheduler, patch/rewrite loop, sweep,
+                   circuit breaker, incremental hashing
   render.py     7  HTML / MD / JSON / index / sitemap
   report.py     8  report.md, similarity.csv
   store.py         SQLite state
@@ -181,6 +247,7 @@ src/pseo/
   keyword_admin.py safe edits to data/keywords.csv (dedupe, app check, atomic write)
   explain.py       per-page trace: inputs, brief, every draft and verdict
 tests/             offline end-to-end and unit tests
+scripts/benchmark.py  architecture benchmark (mock LLM, measured latencies)
 .github/workflows/ schedule + CI
 output/            generated pages, report, manifest, sitemap, run history
 state/pseo.sqlite  pipeline memory

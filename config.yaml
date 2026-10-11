@@ -24,16 +24,27 @@ llm:
   embed_model: gemini-embedding-001
   temperature_writer: 0.8
   temperature_planner: 0.4
-  requests_per_minute: 8      # free tier is ~10 RPM for Flash; stay under it
+  requests_per_minute: 8      # generation calls; free tier is ~10 RPM per Flash model, raise on a paid tier
+  embed_requests_per_minute: 60  # embeddings have their own, much larger quota
   max_retries: 6
   request_timeout_s: 180      # per request; a stuck call is retried instead of hanging the run
+  # Reasoning effort per role. "low" is ~3x faster on Gemini 3.x Flash (measured 3.1 s vs 9.1 s
+  # on the same prompt); empty = the model's default, deeper reasoning. Cheap, checkable steps run
+  # low; the steps where quality is decided (planning, rewriting a page that failed) keep depth.
+  thinking:
+    planner: ""
+    writer_draft: low
+    writer_revise: ""
+    patch: low
+    judge: low
 
 pipeline:
   plan_batch_size: 12         # max keywords planned together (one LLM call sees all siblings)
   related_neighbours: 6       # how many nearest pages the planner sees for internal linking
-  max_revisions: 2            # writer -> QA -> reviser loop iterations before quarantine
+  max_revisions: 3            # fix attempts before quarantine (targeted patches are cheap, so 3)
   max_new_pages_per_run: 200  # budget guard for scheduled runs
-  workers: 1                  # page-level concurrency (raise on paid tier)
+  workers: 4                  # pages generated in parallel; siblings are never in flight together
+  patch_revisions: true       # field-local QA errors -> rewrite only those fields (else full rewrite)
 
 dedupe:
   keyword_merge_cosine: 0.96  # keywords this similar are the SAME page (secondary keyword, no new URL)

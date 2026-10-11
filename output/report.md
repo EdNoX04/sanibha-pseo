@@ -1,11 +1,13 @@
-# pSEO run report: run #8
+# pSEO run report: run #9
 
 - **Status:** ok
-- **Finished:** 2026-10-11 08:21:51 UTC
-- **Duration:** 1.0 s
+- **Finished:** 2026-10-11 09:22:07 UTC
+- **Duration:** 232.2 s
 - **Provider:** gemini (writer `gemini-3.8-flash,gemini-3.7-flash,gemini-3.6-flash,gemini-3.5-flash,gemini-2.5-flash`, embeddings `gemini-embedding-001`)
-- **LLM usage:** 0 generate calls {}, 1 embed calls, 0 input / 0 output tokens, 0 retries
-- **Counts:** planned=0, written=0, revisions=0, passed=0, quarantined=0, failed=0, skipped_unchanged=12, merged=0, retired=0, sweep_requeued=0
+- **LLM usage:** 28 generate calls {'plan': 1, 'write': 12, 'patch': 3, 'judge': 12}, 16 embed calls, 97,153 input / 27,080 output tokens, 5 retries
+- **Counts:** planned=12, written=12, revisions=0, patches=3, passed=12, quarantined=0, failed=0, skipped_unchanged=0, merged=0, retired=0, sweep_requeued=0
+- **Time per stage (s):** ingest+cluster 0.8, plan 49.0, write+check 182.3, sweep 0.0, render 0.1
+- **Workers:** 4 (siblings never in flight together) · thinking: {'planner': '', 'writer_draft': 'low', 'writer_revise': '', 'patch': 'low', 'judge': 'low'}
 - **Published pages in corpus:** 12
 
 ## Keyword clustering (cannibalisation check before writing)
@@ -33,23 +35,23 @@
 
 | Metric | Max pair | Mean | Threshold |
 |---|---|---|---|
-| 5-word shingle Jaccard | 0.0176 | 0.0058 | 0.12 |
-| Embedding cosine | 0.9292 | 0.8501 | 0.93 |
-| Verbatim shared sentences (≥8 words) | 1 | 0.02 | 1 |
-| FAQ question cosine (across pages) | 0.9279 | 0.7592 | 0.93 |
+| 5-word shingle Jaccard | 0.0151 | 0.0036 | 0.12 |
+| Embedding cosine | 0.9298 | 0.8476 | 0.93 |
+| Verbatim shared sentences (≥8 words) | 0 | 0.00 | 1 |
+| FAQ question cosine (across pages) | 0.9227 | 0.7544 | 0.93 |
 
 Most similar pairs:
 
 | Page A | Page B | Cosine | Jaccard | Shared sentences |
 |---|---|---|---|---|
-| convert-scanned-image-to-text | ocr-handwriting-iphone | 0.9292 | 0.0052 | 0 |
-| best-free-pdf-scanner-app | scan-document-without-an-app | 0.9114 | 0.0115 | 0 |
-| best-free-pdf-scanner-app | convert-pdf-to-word-free | 0.8987 | 0.0100 | 0 |
-| convert-pdf-to-word-free | convert-scanned-image-to-text | 0.8966 | 0.0135 | 0 |
-| scan-document-without-an-app | scan-receipt-on-iphone | 0.8941 | 0.0068 | 0 |
-| scan-document-without-an-app | sign-pdf-on-iphone-free | 0.8878 | 0.0031 | 0 |
-| best-free-pdf-scanner-app | sign-pdf-on-iphone-free | 0.8811 | 0.0076 | 0 |
-| best-free-pdf-scanner-app | combine-multiple-pdfs-into-one | 0.8808 | 0.0139 | 0 |
+| convert-scanned-image-to-text | ocr-handwriting-iphone | 0.9298 | 0.0151 | 0 |
+| best-free-pdf-scanner-app | scan-document-without-an-app | 0.9293 | 0.0059 | 0 |
+| best-free-pdf-scanner-app | scan-receipt-on-iphone | 0.8962 | 0.0028 | 0 |
+| best-free-pdf-scanner-app | remove-shadow-from-scanned-document | 0.8927 | 0.0036 | 0 |
+| best-free-pdf-scanner-app | convert-scanned-image-to-text | 0.8926 | 0.0025 | 0 |
+| scan-document-without-an-app | scan-receipt-on-iphone | 0.8905 | 0.0022 | 0 |
+| best-free-pdf-scanner-app | ocr-handwriting-iphone | 0.8856 | 0.0011 | 0 |
+| ocr-handwriting-iphone | scan-document-without-an-app | 0.8847 | 0.0011 | 0 |
 
 ## Pages
 
@@ -57,18 +59,18 @@ Closest neighbour = the most similar other published page in the final corpus.
 
 | Page | Status | Words | Drafts | Editor (spec/use/acc/swap) | Max Jaccard | Max cosine (closest page) |
 |---|---|---|---|---|---|---|
-| best-free-pdf-scanner-app | passed | 1118 | 1 | 5/5/5/pass | 0.0176 | 0.9114 (scan-document-without-an-app) |
-| combine-multiple-pdfs-into-one | passed | 1027 | 2 | 5/5/4/pass | 0.0151 | 0.8808 (best-free-pdf-scanner-app) |
-| compress-pdf-file-size-free | passed | 1102 | 1 | 5/5/5/pass | 0.0176 | 0.8727 (combine-multiple-pdfs-into-one) |
-| convert-pdf-to-word-free | passed | 1078 | 1 | 5/5/5/pass | 0.0135 | 0.8987 (best-free-pdf-scanner-app) |
-| convert-scanned-image-to-text | passed | 1080 | 1 | 5/5/5/pass | 0.0135 | 0.9292 (ocr-handwriting-iphone) |
-| ocr-handwriting-iphone | passed | 1282 | 2 | 5/5/5/pass | 0.0097 | 0.9292 (convert-scanned-image-to-text) |
-| remove-shadow-from-scanned-document | passed | 1037 | 2 | 5/5/5/pass | 0.0149 | 0.8687 (best-free-pdf-scanner-app) |
-| scan-business-card-to-contacts | passed | 1027 | 1 | 5/5/5/pass | 0.0061 | 0.8712 (scan-receipt-on-iphone) |
-| scan-document-without-an-app | passed | 960 | 1 | 5/5/4/pass | 0.0115 | 0.9114 (best-free-pdf-scanner-app) |
-| scan-passport-photo-for-application | passed | 1112 | 2 | 5/4/4/pass | 0.0084 | 0.8427 (scan-receipt-on-iphone) |
-| scan-receipt-on-iphone | passed | 996 | 1 | 5/5/5/pass | 0.0076 | 0.8941 (scan-document-without-an-app) |
-| sign-pdf-on-iphone-free | passed | 1059 | 1 | 5/5/5/pass | 0.0102 | 0.8878 (scan-document-without-an-app) |
+| best-free-pdf-scanner-app | passed | 939 | 1 | 5/5/5/pass | 0.0059 | 0.9293 (scan-document-without-an-app) |
+| combine-multiple-pdfs-into-one | passed | 891 | 1 | 5/5/5/pass | 0.0084 | 0.8752 (best-free-pdf-scanner-app) |
+| compress-pdf-file-size-free | passed | 961 | 1 | 5/5/5/pass | 0.0084 | 0.8629 (combine-multiple-pdfs-into-one) |
+| convert-pdf-to-word-free | passed | 1068 | 1 | 5/5/5/pass | 0.0086 | 0.8821 (convert-scanned-image-to-text) |
+| convert-scanned-image-to-text | passed | 1095 | 2 | 5/5/5/pass | 0.0151 | 0.9298 (ocr-handwriting-iphone) |
+| ocr-handwriting-iphone | passed | 878 | 1 | 5/5/5/pass | 0.0151 | 0.9298 (convert-scanned-image-to-text) |
+| remove-shadow-from-scanned-document | passed | 1029 | 2 | 5/5/5/pass | 0.0064 | 0.8927 (best-free-pdf-scanner-app) |
+| scan-business-card-to-contacts | passed | 927 | 1 | 5/5/5/pass | 0.0096 | 0.8657 (convert-scanned-image-to-text) |
+| scan-document-without-an-app | passed | 981 | 1 | 5/5/5/pass | 0.0059 | 0.9293 (best-free-pdf-scanner-app) |
+| scan-passport-photo-for-application | passed | 882 | 1 | 5/5/5/pass | 0.0029 | 0.8349 (scan-document-without-an-app) |
+| scan-receipt-on-iphone | passed | 887 | 2 | 5/5/5/pass | 0.0072 | 0.8962 (best-free-pdf-scanner-app) |
+| sign-pdf-on-iphone-free | passed | 957 | 1 | 5/5/5/pass | 0.0081 | 0.8797 (scan-document-without-an-app) |
 
 ## Rejections, revisions and incidents (all runs)
 
@@ -98,4 +100,10 @@ Each QA line is a draft that was rejected; its errors were sent back to the writ
 **Run #6** (ok, started 2026-10-11 07:21 UTC)
 
 - **convert-scanned-image-to-text** [sweep/warning]: sweep: too similar to /ocr-handwriting-iphone (jaccard 0.005, shared sentences 0, cosine 0.924); FAQ 'Can you export the extracted text as a .txt file or copy it to the clipboard for free?' asks the same thing as /ocr-handwriting-iphone's 'Can you copy or export recognized handwriting as plain .txt for free?' (cosine 0.948); replace it with a question specific to this page; FAQ 'How does on-device OCR compare to using built-in iOS Live Text in the Photos app?' asks the same thing as /ocr-handwriting-iphone's 'How does built-in iOS Live Text perform on handwriting compared to dedicated app OCR?' (cosine 0.949); replace it with a question specific to this page
+
+**Run #9** (ok, started 2026-10-11 09:18 UTC)
+
+- **scan-receipt-on-iphone** [qa/warning]: attempt 1 (draft): banned filler phrase: 'seamless'
+- **remove-shadow-from-scanned-document** [qa/warning]: attempt 1 (draft): FAQ 'Does the built-in iOS Notes or Files scanner have a shadow removal tool?' asks the same thing as /scan-document-without-an-app's 'Can built-in iOS scanning remove shadows or compress large PDFs?' (cosine 0.931); link to that page instead and ask a question specific to this page
+- **convert-scanned-image-to-text** [qa/warning]: attempt 1 (draft): FAQ 'Can I copy the recognised text or export it as a .txt file for free?' duplicates /ocr-handwriting-iphone's FAQ 'Can I export recognised handwritten notes as a text file for free?'; replace it with a question only this page's searcher would ask; FAQ 'Can I copy the recognised text or export it as a .txt file for free?' asks the same thing as /ocr-handwriting-iphone's 'Can I export recognised handwritten notes as a text file for free?' (cosine 0.952); link to that page instead and ask a question specific to this page
 

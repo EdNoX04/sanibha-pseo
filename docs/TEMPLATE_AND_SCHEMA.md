@@ -61,4 +61,20 @@ The ten sections above as typed fields. Gemini's structured-output mode returns 
 
 ### Stored per page (SQLite `pages` table)
 
-`status` (passed / quarantined / failed / merged / retired / needs_revision), `input_hash`, the three JSON layers, `body_text`, shingle hashes, embedding, `qa_json` (all metrics), `judge_json`, `attempts`, `error`.
+`status` (passed / quarantined / failed / merged / retired / needs_revision), `input_hash`, the three JSON layers, `body_text`, shingle hashes, page embedding, FAQ-question embeddings, `qa_json` (all metrics), `judge_json`, `attempts`, `error`.
+
+Also stored: `runs` and `events` (every attempt and verdict, used by `explain` and the report) and `embed_cache` (keyword vectors keyed by model + text, so an unchanged run makes no embedding calls).
+
+### QA result (`QAResult`, one per attempt)
+
+| Field | Meaning |
+|---|---|
+| `passed` | all gates passed |
+| `errors` | each failure as an instruction the writer can act on, e.g. *"FAQ '…' asks the same thing as /sign-pdf-on-iphone-free's FAQ '…'"* |
+| `warnings` | logged, not blocking |
+| `metrics` | word count, max Jaccard / cosine / FAQ cosine and against which page, pages compared |
+| `overlaps` | verbatim sentences shared with other pages |
+| `fix_fields` | the `PageContent` fields the errors live in (e.g. `["faqs"]`, `["meta_description"]`) |
+| `page_level` | true when an error is about the page as a whole (meaning too close to another page, length, editor rejection) |
+
+The pipeline routes on the last two: if `page_level` is false and `fix_fields` is non-empty, only those fields are regenerated (a "patch", using a schema built on the fly with just those fields) and merged back; otherwise the page is rewritten.

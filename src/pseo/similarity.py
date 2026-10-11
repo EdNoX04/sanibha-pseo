@@ -70,22 +70,20 @@ class MinHashLSH:
         assert num_perm % bands == 0
         self.num_perm, self.bands, self.rows = num_perm, bands, num_perm // bands
         rng = np.random.default_rng(seed)
-        self.a = rng.integers(1, _MERSENNE, num_perm, dtype=np.uint64)
-        self.b = rng.integers(0, _MERSENNE, num_perm, dtype=np.uint64)
+        self.a = rng.integers(1, 2**32, num_perm, dtype=np.uint64) | np.uint64(1)  # odd multipliers
+        self.b = rng.integers(0, 2**32, num_perm, dtype=np.uint64)
         self.buckets: dict[tuple, set[str]] = defaultdict(set)
         self.keys: set[str] = set()
 
     def signature(self, sh: set[int]) -> np.ndarray:
+        """Vectorised MinHash: h_i(x) = (a_i * x + b_i) mod 2^32 over 32-bit shingle hashes.
+        a_i, b_i < 2^32 and x < 2^32 keep a_i * x inside uint64, so numpy does all permutations
+        for all shingles in one broadcast instead of a Python double loop."""
         if not sh:
-            return np.full(self.num_perm, _MERSENNE, dtype=np.uint64)
-        x = np.fromiter(sh, dtype=np.uint64)
-        # (a*x + b) mod p for every (perm, shingle); python ints avoid uint64 overflow issues
-        sig = np.empty(self.num_perm, dtype=np.uint64)
-        xs = [int(v) for v in x]
-        for i in range(self.num_perm):
-            ai, bi = int(self.a[i]), int(self.b[i])
-            sig[i] = min((ai * v + bi) % _MERSENNE for v in xs)
-        return sig
+            return np.full(self.num_perm, 0xFFFFFFFF, dtype=np.uint64)
+        x = np.fromiter(sh, dtype=np.uint64, count=len(sh)) & np.uint64(0xFFFFFFFF)
+        h = (self.a[:, None] * x[None, :] + self.b[:, None]) & np.uint64(0xFFFFFFFF)
+        return h.min(axis=1)
 
     def _band_keys(self, sig: np.ndarray):
         for band in range(self.bands):

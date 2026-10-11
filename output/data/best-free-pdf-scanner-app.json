@@ -30,158 +30,153 @@
   "brief": {
     "slug": "best-free-pdf-scanner-app",
     "intent_type": "comparison",
-    "searcher_goal": "Find a truly free iOS scanner app that digitizes multi-page paper documents without subscriptions, watermarks, or page caps.",
-    "scenario": "A student or home user needs to scan a stack of printed paperwork into a clear PDF on their iPhone without paying for an Adobe or CamScanner subscription.",
-    "unique_angle": "Direct breakdown of what genuine free scanning entails on iOS, contrasting built-in scanner options with Document Scanner & PDF Toolkit's full free feature set.",
+    "searcher_goal": "Find a trustworthy, free iPhone or iPad scanning app that does not hide basic page scanning behind paywalls or upload documents to remote servers.",
+    "scenario": "You have a stack of paper paperwork to digitise onto your iPad or iPhone, and you want to know what app gives you clean multi-page scans without paid subscriptions or account logins.",
+    "unique_angle": "Compares genuine free feature sets between built-in iOS tools and Document Scanner & PDF Toolkit, focusing on on-device privacy and shadow removal rather than unvetted third-party cloud apps.",
     "must_answer": [
-      "Which core scanning features in Document Scanner & PDF Toolkit are completely free?",
-      "Does the free scanner place watermarks or cap the number of pages you can scan?",
-      "How does the app compare to built-in scanning tools in iOS Notes and Files?",
-      "Are scanned documents kept private and processed on the device?",
-      "Which advanced export features require the Pro in-app purchase?"
+      "Which core scanner features are genuinely free in Document Scanner & PDF Toolkit?",
+      "How does a dedicated scanning app compare to the built-in iOS Notes or Files scanner?",
+      "Are documents uploaded to cloud servers when using this app?",
+      "Can I scan multi-page documents and reorder pages for free?",
+      "What features require a paid upgrade?"
     ],
     "exclusions": [
       {
-        "topic": "Form filling and placing digital signatures on PDF files",
-        "owner_slug": "sign-pdf-on-iphone-free"
+        "topic": "Using built-in iOS Notes and Files to scan without installing an app",
+        "owner_slug": "scan-document-without-an-app"
       },
       {
-        "topic": "Exporting scanned PDFs directly into editable Word .docx format",
-        "owner_slug": "convert-pdf-to-word-free"
-      },
-      {
-        "topic": "Reducing PDF file size with preset compression tiers",
+        "topic": "Compressing large PDF files to meet email attachment limits",
         "owner_slug": "compress-pdf-file-size-free"
       },
       {
-        "topic": "Scanning documents using native iOS Notes and Files without installing apps",
-        "owner_slug": "scan-document-without-an-app"
+        "topic": "Signing and filling PDF forms",
+        "owner_slug": "sign-pdf-on-iphone-free"
       }
     ],
     "feature_ids": [
       "auto_edge",
       "batch_scan",
       "enhance_filters",
-      "privacy_ondevice",
-      "share_export"
+      "privacy_ondevice"
     ],
     "platform_fact_ids": [
       "ios_notes_scan",
-      "ios_files_scan"
+      "ios_files_scan",
+      "online_converters"
     ],
     "related_slugs": [
       "scan-document-without-an-app",
-      "sign-pdf-on-iphone-free",
       "compress-pdf-file-size-free",
-      "convert-pdf-to-word-free"
+      "sign-pdf-on-iphone-free"
     ],
     "ambiguity_note": ""
   },
   "content": {
-    "title": "Best Free PDF Scanner App for iPhone & iPad",
-    "meta_description": "Find a truly free PDF scanner app for your iPhone or iPad. Scan multi-page documents, auto-crop, enhance, and export without watermarks or hidden costs.",
-    "h1": "Find the Best Free PDF Scanner App for iPhone and iPad",
-    "quick_answer": "The best free PDF scanner apps for iPhone and iPad let you digitize multi-page documents without subscriptions, watermarks, or page limits. Look for features like automatic edge detection, enhancement filters, and the ability to combine multiple scans into one PDF. Verify that all core scanning and export functions are free and run on your device for privacy.",
+    "title": "Best Free PDF Scanner App for iPhone and iPad",
+    "meta_description": "Find the best free PDF scanner app for iOS. Compare genuine free scanning features, multi-page capture, on-device privacy, and built-in Apple tools.",
+    "h1": "Best Free PDF Scanner App for iOS",
+    "quick_answer": "The best free PDF scanner apps process documents entirely on your device without charging subscriptions or forcing cloud uploads. Document Scanner & PDF Toolkit offers free multi-page scanning, automatic edge cropping, and shadow removal. Built-in iOS tools like Notes and Files also provide basic document scanning for free.",
     "intro": [
-      "If you need to scan a stack of printed papers into a clear PDF on your iPhone or iPad, finding a truly free app can be a challenge. Many apps offer basic scanning, but then hide essential features behind subscriptions or add watermarks to your documents.",
-      "This page helps you identify genuinely free PDF scanner options for iOS. We will cover what to look for in a free app, compare it to built-in iOS tools, and show how Document Scanner & PDF Toolkit provides comprehensive free scanning features without hidden costs or watermarks."
+      "You have a stack of physical paperwork to digitise onto your iPad or iPhone, but many App Store scanners hide essential tools behind paywalls, force weekly subscriptions, or upload private files to external servers.",
+      "Finding a reliable scanner means identifying which core features remain free indefinitely and verifying that your personal records stay strictly private.",
+      "This guide breaks down how to evaluate scanning tools, compares dedicated app functionality against native Apple utilities, and clarifies what you can do without spending money."
     ],
-    "steps_heading": "How to Choose a Free PDF Scanner App for iOS",
+    "steps_heading": "How to Test and Evaluate a Free PDF Scanner App",
     "steps": [
       {
-        "title": "Test Multi-Page Scanning",
-        "detail": "Download a few free scanner apps and try scanning a document with 3-4 pages. Check if the app lets you capture all pages in one session and combine them into a single multi-page PDF. Ensure the app performs automatic edge detection and crops the pages without manual adjustments for each photo."
+        "title": "Check the pricing model before digitising paperwork",
+        "detail": "Open the app's App Store listing and review its in-app purchases. Verify that basic scanning, multi-page capture, and PDF sharing are available in the free tier rather than locked behind an upfront subscription trial."
       },
       {
-        "title": "Evaluate Enhancement Features",
-        "detail": "After scanning, check for one-tap enhancement filters like Black & White or Colour Boost. Look for a shadow removal feature that evens out lighting, which is useful for scans taken in poor light. A good free app should offer basic image correction to make your scans clear and readable."
+        "title": "Test automatic edge detection on a flat surface",
+        "detail": "Place a test document on a contrasting surface and point your camera. Look for automatic boundary framing and perspective correction that straightens angles without forcing manual adjustments."
       },
       {
-        "title": "Look for Watermarks and Limits",
-        "detail": "Review your exported PDF. Verify there are no watermarks placed on the document and no caps on the number of pages you can scan or the number of documents you can save per day. Many \"free\" apps impose these restrictions, making them unsuitable for regular use without a paid upgrade."
+        "title": "Evaluate shadow removal under everyday lighting",
+        "detail": "Cast a hand or phone shadow across the page to test processing filters. Switch between Auto, Black & White, Grayscale, Colour Boost, and dedicated Shadow Removal to ensure faint text remains legible."
       },
       {
-        "title": "Check Export and Sharing Options",
-        "detail": "Confirm you can save the scanned PDF to your device or share it directly to common cloud services like iCloud Drive, Google Drive, or Dropbox. The ability to easily export your documents is crucial for integrating your scans into your workflow."
+        "title": "Capture multiple pages to verify multi-page PDF export",
+        "detail": "Scan three or four pages in a single batch session. Ensure you can reorder pages and export them combined into one multi-page PDF without watermarks or page count restrictions."
+      },
+      {
+        "title": "Confirm on-device privacy and offline processing",
+        "detail": "Turn on Airplane Mode or inspect app permissions to ensure your pages process entirely on your iPhone or iPad. Sensitive legal, tax, or identity records should never require remote cloud processing."
       }
     ],
-    "alternatives_heading": "Other Ways to Scan Documents on iOS",
+    "alternatives_heading": "Free Alternative Scanning Methods on iOS",
     "alternatives": [
       {
-        "method": "iOS Notes App",
-        "how": "Open or create a note, tap the camera button, choose Scan Documents. The scan is saved inside the note and can be shared as a PDF.",
-        "best_for": "Quick, single-page scans for personal notes or casual use.",
-        "limitation": "The Notes app applies automatic contrast but has no dedicated shadow-removal control. Page order cannot be rearranged after scanning if you combine multiple images."
+        "method": "Apple Notes Document Scanner",
+        "how": "Open or create a note in the iOS Notes app, tap the camera icon, and choose Scan Documents. Save the scan directly into your note and export it via the share sheet.",
+        "best_for": "Quickly filing short notes and receipts directly alongside typed Apple Notes checklists.",
+        "limitation": "Scans are stored inside note files rather than standard folders, and Notes lacks dedicated shadow removal or advanced page-tuning filters."
       },
       {
-        "method": "iOS Files App",
-        "how": "Open Files, tap the More (\b\b\b) button, and choose Scan Documents. The result is saved as a PDF in that location.",
-        "best_for": "Scanning directly into a specific folder on your device or cloud storage.",
-        "limitation": "Like Notes, the Files scanner lacks specific shadow removal. You can select several images or PDFs and choose Create PDF, but page order follows the selection and cannot be rearranged there."
+        "method": "Apple Files App Scanner",
+        "how": "Open the iOS Files app, navigate to your target folder, tap the More button (represented by three dots), and select Scan Documents to save immediately as a PDF.",
+        "best_for": "Saving single documents directly into iCloud Drive or local iPhone storage without opening another app.",
+        "limitation": "Does not include dedicated lighting filters for heavy phone shadows, and page management controls are limited."
       },
       {
-        "method": "Free Online PDF Tools",
-        "how": "Upload your document to a website that offers PDF scanning or conversion services.",
-        "best_for": "Occasional, non-sensitive documents if you do not want to install an app.",
-        "limitation": "These tools require uploading the document to a third-party server, which is a privacy concern for IDs, contracts, or financial records. Free tiers often limit file size or daily use."
+        "method": "Web-Based Online PDF Converters",
+        "how": "Upload captured photos or PDFs to browser-based conversion sites to generate documents.",
+        "best_for": "Occasional desktop-to-mobile browser conversions when no local scanning tool is accessible.",
+        "limitation": "Requires uploading your personal paperwork to external servers, which creates privacy risks for confidential files and often involves daily upload caps."
       }
     ],
-    "features_heading": "Core Free Scanning Features in Document Scanner & PDF Toolkit",
+    "features_heading": "Key Scanner Features in Document Scanner & PDF Toolkit",
     "feature_points": [
       {
         "feature_id": "auto_edge",
-        "benefit": "Automatically detects page borders in the camera view, then crops and straightens your document for a professional-looking scan every time, even if you don't hold your phone perfectly straight."
+        "benefit": "Detects document borders in the camera view, cropping and perspective-correcting skewed angles so your scans appear flat and rectangular."
       },
       {
         "feature_id": "batch_scan",
-        "benefit": "Capture many pages in one session and save them as a single multi-page PDF. You can also reorder pages within the document after scanning."
+        "benefit": "Allows you to scan thick stacks of paper in one continuous sitting and reorder the pages before saving them as a single clean PDF."
       },
       {
         "feature_id": "enhance_filters",
-        "benefit": "Improve scan clarity with one-tap filters (Auto, Black & White, Grayscale, Colour Boost). The Shadow Removal filter evens out lighting and removes distracting hand or phone shadows."
+        "benefit": "Cleans up uneven room lighting with Auto, Black & White, Grayscale, Colour Boost, and a Shadow Removal filter that erases phone shadows."
       },
       {
         "feature_id": "privacy_ondevice",
-        "benefit": "All scanning, filters, and text recognition run directly on your iPhone. Your documents are stored locally and are not uploaded to any server unless you choose to save them to a cloud service."
-      },
-      {
-        "feature_id": "share_export",
-        "benefit": "Save your scans as PDF or JPG files. Share them via AirDrop, Mail, or the Files app, or save directly to iCloud Drive, Google Drive, and Dropbox."
+        "benefit": "Executes all image cropping, enhancement filters, and file generation locally on your hardware, ensuring private documents never touch outside servers."
       }
     ],
-    "tips_heading": "Tips for Getting the Best Free Scans on iOS",
+    "tips_heading": "Tips for Getting Clean Mobile Scans",
     "tips": [
-      "Place your document on a flat, contrasting surface for better edge detection.",
-      "Ensure good, even lighting to minimize shadows on your document.",
-      "Use the app's enhancement filters, especially Shadow Removal, to improve readability of scans taken in less ideal conditions.",
-      "Review your scans before saving to ensure all text is clear and no important details are cut off.",
-      "When scanning multiple pages, keep them in order as you capture them to simplify reordering later."
+      "Place papers on a dark, non-reflective background so automatic edge detection can instantly distinguish page borders.",
+      "Hold your device parallel to the document to reduce perspective distortion before the straightening filter runs.",
+      "Use the Shadow Removal filter when scanning at a desk directly beneath overhead light bulbs to eliminate hand silhouettes.",
+      "Keep pages flat by smoothing out folded creases before capturing, which ensures text lines stay straight."
     ],
     "faqs": [
       {
-        "question": "Which core scanning features in Document Scanner & PDF Toolkit are completely free?",
-        "answer": "Document Scanner & PDF Toolkit is free to download. You get free automatic edge detection, multi-page batch scanning, and enhancement filters including shadow removal. On-device text recognition (OCR) and PDF merging, signing, and compression are also free."
+        "question": "Which core scanner features are genuinely free in Document Scanner & PDF Toolkit?",
+        "answer": "Camera scanning, automatic border cropping, multi-page batch capture, enhancement filters, shadow removal, and basic PDF export are completely free. You can also merge, compress, and sign documents without paying."
       },
       {
-        "question": "Does the free scanner place watermarks or cap the number of pages you can scan?",
-        "answer": "No, Document Scanner & PDF Toolkit does not add watermarks to your scans. There are also no limits on the number of pages you can scan or the number of documents you can create and export for free."
+        "question": "How does a dedicated scanning app compare to the built-in iOS Notes or Files scanner?",
+        "answer": "While iOS Notes and Files capture standard scans, a dedicated tool offers specific image filters like Shadow Removal and Colour Boost. It also allows flexible page reordering within multi-page documents before saving."
       },
       {
-        "question": "How does the app compare to built-in scanning tools in iOS Notes and Files?",
-        "answer": "While iOS Notes and Files apps offer basic scanning, they lack advanced features like dedicated shadow removal and flexible page reordering. Document Scanner & PDF Toolkit provides these tools for clearer, better-organized scans. It also offers OCR, PDF merging, and compression, which are not available in built-in iOS scanners."
+        "question": "Are documents uploaded to cloud servers when using this app?",
+        "answer": "No. All scanning, perspective correction, enhancement filtering, and PDF generation run entirely on your iPhone or iPad. Files stay stored on your local device unless you manually choose to share them to a cloud provider."
       },
       {
-        "question": "Are scanned documents kept private and processed on the device?",
-        "answer": "Yes, all scanning, filters, and text recognition in Document Scanner & PDF Toolkit run entirely on your iPhone or iPad. Your documents are processed and stored locally on your device, ensuring your privacy. Files are only uploaded if you choose to save them to a cloud service."
+        "question": "Can I scan multi-page documents and reorder pages for free?",
+        "answer": "Yes. Multi-page batch scanning is part of the free feature set. You can capture as many pages as needed in a single session and adjust their order before saving the final PDF."
       },
       {
-        "question": "Which advanced export features require the Pro in-app purchase?",
-        "answer": "Exporting your scanned PDFs into an editable Word (.docx) document is a Pro feature. Other features like PDF compression and signing are free. For more details on converting to Word, see our page on converting PDF to Word free."
+        "question": "What features require a paid upgrade?",
+        "answer": "Exporting scanned documents into editable Microsoft Word (.docx) files is the primary Pro feature requiring an in-app purchase. Core PDF scanning, image enhancements, and PDF exports remain free."
       }
     ],
     "cta": {
-      "heading": "Get a Truly Free PDF Scanner for iOS",
-      "text": "Download Document Scanner & PDF Toolkit for free today. Experience complete scanning features without subscriptions or watermarks, and keep your documents private on your device."
+      "heading": "Start Scanning Documents for Free",
+      "text": "Download Document Scanner & PDF Toolkit on iPhone or iPad to digitise paperwork with automatic edge cropping, shadow removal, and complete on-device privacy."
     }
   },
   "qa": {
@@ -189,25 +184,29 @@
     "errors": [],
     "warnings": [],
     "metrics": {
-      "words": 1118,
+      "words": 939,
       "keyword_coverage": 1.0,
-      "max_jaccard": 0.0115,
+      "max_jaccard": 0.0059,
       "max_jaccard_with": "scan-document-without-an-app",
-      "max_cosine": 0.9114,
+      "max_cosine": 0.9293,
       "max_cosine_with": "scan-document-without-an-app",
-      "shared_sentences": 0
+      "shared_sentences": 0,
+      "compared_with": 8,
+      "writer_model": "gemini-3.7-flash",
+      "mode": "draft",
+      "judge_model": "gemini-3.5-flash-lite"
     },
-    "overlaps": []
+    "overlaps": [],
+    "fix_fields": [],
+    "page_level": false
   },
   "judge": {
     "specificity": 5,
     "usefulness": 5,
     "accuracy_risk": 5,
     "swap_test": "pass",
-    "problems": [
-      "The 'how' description for 'iOS Files App' in the 'Other Ways to Scan Documents on iOS' section contains `\\b\\b\\b` which is an incorrect character sequence. It should be `•••` or `...` as per the platform facts."
-    ]
+    "problems": []
   },
   "attempts": 1,
-  "input_hash": "69689b6066b05500"
+  "input_hash": "459150a0dcc70406"
 }

@@ -88,6 +88,8 @@ svg text { font-family: var(--body); }
 .node .kind { font-family: var(--mono); font-size: 10.5px; fill: var(--ink-3); letter-spacing: .04em; }
 .node .badge { font-family: var(--mono); font-size: 11px; font-weight: 500; fill: #fff; }
 .node .status { font-family: var(--mono); font-size: 10.5px; font-weight: 600; }
+.group { fill: var(--hi-soft); stroke: var(--hi); stroke-width: 1.2; stroke-dasharray: 6 5; opacity: .55; }
+.glabel { font-family: var(--mono); font-size: 11px; fill: var(--hi); }
 .wire { fill: none; stroke: var(--wire); stroke-width: 1.8; }
 .wire.data { stroke-dasharray: 5 5; }
 .wire.loop { stroke: var(--t-fail); stroke-width: 2; }
@@ -124,7 +126,7 @@ dd code { font-family: var(--mono); font-size: 0.86em; background: var(--bg); pa
   <header>
     <div>
       <h1>pSEO agent flow</h1>
-      <p class="sub">How a keyword becomes a published page. Click any node to see what it does, or press Play to watch one real keyword go through it, including the drafts that were rejected and sent back.</p>
+      <p class="sub">How a keyword becomes a published page. Click any node to see what it does, or press Play to watch one real keyword go through it, including a draft that was rejected and patched.</p>
     </div>
     <div class="toolbar">
       <button class="primary" id="play" type="button">Play one keyword</button>
@@ -142,12 +144,12 @@ dd code { font-family: var(--mono); font-size: 0.86em; background: var(--bg); pa
     <span><i class="loop"></i>revision loop</span>
     <span><i class="dash"></i>reads / writes data</span>
   </div>
-  <div class="canvas"><svg id="svg" viewBox="0 0 1600 660" role="img" aria-label="Pipeline: schedule, ingest, cluster, plan, write, checks, editor, save, corpus sweep, render, report. Failed checks loop back to write, up to two revisions, then quarantine."></svg></div>
+  <div class="canvas"><svg id="svg" viewBox="0 0 1600 660" role="img" aria-label="Pipeline: schedule, ingest, cluster, plan, then per page in parallel: write, checks, editor, save; field-local failures go to a patch step, page-level failures to a rewrite, then quarantine; afterwards corpus sweep, render, report."></svg></div>
   <div class="below">
     <div class="panel" id="inspector" aria-live="polite"></div>
     <div class="panel">
       <h2>Run console</h2>
-      <p class="note">Replays the stored history of <code style="font-family:var(--mono)">convert scanned image to text</code>, the page closest to another page. Condensed from runs #3 and #6; print the full version with <code style="font-family:var(--mono)">./run.sh explain convert-scanned-image-to-text</code>.</p>
+      <p class="note">Replays the stored history of <code style="font-family:var(--mono)">convert scanned image to text</code>, the page closest to another page. From run #9 (new architecture); print the full version with <code style="font-family:var(--mono)">./run.sh explain convert-scanned-image-to-text</code>.</p>
       <div class="console" id="console"><span class="empty">Press Play or Step to start.</span></div>
     </div>
   </div>
@@ -155,10 +157,10 @@ dd code { font-family: var(--mono); font-size: 0.86em; background: var(--bg); pa
 
 <script>
 const NODES = {
-  trigger: { x: 20, y: 120, kind: "trigger", badge: "⏱", title: "Schedule", sub: "cron or ./run.sh run",
+  trigger: { x: 20, y: 120, kind: "trigger", badge: "⏱", title: "Schedule", sub: "daily · ./run.sh",
     what: "Starts a run. In production GitHub Actions runs it every day; locally it is ./run.sh run. A file lock stops two runs overlapping.",
     input: "Nothing. The keyword list is read in the next step.", output: "A new run record, plus a heartbeat ping so a missed run is noticed.",
-    example: "Run #7: 0 pages to generate, 12 unchanged, so nothing was regenerated.", file: ".github/workflows/pseo.yml, src/pseo/ops.py",
+    example: "Run #9 (all 12 pages rebuilt on the new architecture) took 232 s end to end.", file: ".github/workflows/pseo.yml, src/pseo/ops.py",
     fail: "If the run never starts, the heartbeat service alerts because the expected ping never arrives." },
   keywords: { x: 20, y: 340, kind: "store", badge: "CSV", title: "keywords.csv", sub: "12 keywords",
     what: "The input list: one keyword per row with the app it belongs to. Edited by hand or with ./run.sh add / remove / replace.",
@@ -169,66 +171,71 @@ const NODES = {
     input: "A keyword.", output: "Slug (URL), intent guess, iPhone?, wants free?, source → target format, app features whose trigger words appear.",
     example: "convert-scanned-image-to-text · intent: conversion · image → text · candidate features: OCR, filters", file: "src/pseo/keywords.py",
     fail: "Nothing to fail; bad rows are skipped." },
-  cluster: { x: 480, y: 120, kind: "ai", badge: "E", title: "2 Cluster", sub: "embeddings",
-    what: "Embeds every keyword (turns meaning into numbers) and compares them. Near-identical keywords merge into one page; close ones become siblings that must be planned apart.",
+  cluster: { x: 480, y: 120, kind: "ai", badge: "E", title: "2 Cluster", sub: "embeddings (cached)",
+    what: "Embeds every keyword and compares them. Near-identical keywords merge into one page; close ones become siblings that must be planned apart. Keyword vectors are cached in the database, so a daily run with an unchanged list makes no embedding call.",
     input: "All keyword records.", output: "Merges, sibling lists, internal-link candidates.",
-    example: "Siblings of 'convert scanned image to text': OCR handwriting iPhone (closest), scan document without an app, remove shadow from scanned document.", file: "src/pseo/cluster.py",
+    example: "Siblings of 'convert scanned image to text': OCR handwriting iPhone (closest), scan document without an app, remove shadow from scanned document.", file: "src/pseo/cluster.py, src/pseo/pipeline.py (_embed_cached)",
     fail: "No merges this time: no pair was above 0.96. 16 sibling pairs were found." },
-  plan: { x: 710, y: 120, kind: "ai", badge: "AI", title: "3 Plan", sub: "planner AI",
-    what: "One AI call sees all related keywords together and writes a brief for each: search intent, unique angle, questions to answer, and which page owns each shared topic.",
+  plan: { x: 710, y: 120, kind: "ai", badge: "AI", title: "3 Plan", sub: "planner · deep reasoning",
+    what: "One AI call per batch of related keywords writes a brief for each: search intent, unique angle, questions to answer, and which page owns each shared topic. Separate batches are planned in parallel.",
     input: "Sibling keywords, link candidates, briefs of already-published pages, all fact sheets.", output: "A brief per keyword (PageBrief JSON).",
-    example: "Angle: printed text → plain .txt or clipboard, on-device and free. Leaves handwriting to /ocr-handwriting-iphone and .docx export to /convert-pdf-to-word-free.", file: "src/pseo/agents.py, prompts/plan.md",
+    example: "All 12 planned in one 49 s call. Angle for image-to-text: printed text → .txt or clipboard; handwriting is left to /ocr-handwriting-iphone.", file: "src/pseo/agents.py, prompts/plan.md",
     fail: "A failed planning call fails only its batch; 3 failures in a row trip the circuit breaker." },
   facts: { x: 480, y: 340, kind: "store", badge: "YML", title: "Fact sheets", sub: "app + iOS facts",
     what: "The only allowed source of claims. App features (and which are Pro), plus facts about iOS tools and other options for the alternatives section.",
     input: "Maintained by hand. The app sheet is assumed for this assignment.", output: "The planner sees all facts; the writer sees only the facts its brief selected.",
-    example: "word_open_pdf: desktop Word can convert PDFs but needs a paid licence. Correcting this one fact regenerated only the one page that cites it.", file: "data/apps/doc-scanner.yaml, data/platform_facts.yaml",
+    example: "Correcting one fact (desktop Word needs a licence) regenerated only the one page that cites it.", file: "data/apps/doc-scanner.yaml, data/platform_facts.yaml",
     fail: "Not a step; changes here trigger regeneration of exactly the pages that use the changed fact." },
-  write: { x: 940, y: 120, kind: "ai", badge: "AI", title: "4 Write", sub: "writer AI",
-    what: "Writes the page into the fixed 10-section template as structured JSON. On a revision it gets the previous draft plus the exact reasons it failed.",
-    input: "The brief, its facts, the sibling pages it must not repeat, and on revisions the failure reasons.", output: "PageContent JSON: title, quick answer, steps, alternatives, features, tips, FAQs, call to action.",
-    example: "Draft 1 → rejected. Draft 2 → rejected. Draft 3 → passed.", file: "src/pseo/agents.py, prompts/write.md",
+  write: { x: 940, y: 120, kind: "ai", badge: "AI", title: "4 Write", sub: "writer · fast draft",
+    what: "Writes the page into the fixed 10-section template as structured JSON. First drafts use low reasoning effort (about 3x faster); a full rewrite after a page-level failure uses the model's deeper default. The prompt already lists the siblings' headings and FAQ questions, so overlap is avoided up front. Up to 4 pages are written at once, never two siblings together.",
+    input: "The brief, its facts, the siblings' published headings and FAQs.", output: "PageContent JSON: title, quick answer, steps, alternatives, features, tips, FAQs, call to action.",
+    example: "Run #9: 12 first drafts, 9 passed straight away, 0 full rewrites needed.", file: "src/pseo/agents.py, prompts/write.md, src/pseo/pipeline.py (_schedule)",
     fail: "Overloaded or out of quota: switches to the next model in the chain. Timeout: 180 s, then retry." },
   checks: { x: 1170, y: 120, kind: "code", badge: "{ }", title: "5a Checks", sub: "code, vs all pages",
-    what: "Code checks every draft against every published page: shared 5-word phrases, copied sentences, similar meaning, similar FAQ questions, near-identical titles. Plus rules: length, keyword in title, banned filler, over-claims, Pro features called free.",
-    input: "The draft, its embeddings, the whole published corpus from the database.", output: "Pass, or a list of exact errors.",
-    example: "Draft 1 failed: too close in meaning to /ocr-handwriting-iphone (0.932, limit 0.93).", file: "src/pseo/quality.py, src/pseo/similarity.py",
-    fail: "Errors go back to Write as instructions. After 2 failed revisions the page is quarantined." },
-  editor: { x: 1400, y: 120, kind: "ai", badge: "AI", title: "5b Editor", sub: "second AI model",
-    what: "A different AI model reviews the page like a strict editor: specificity, usefulness, accuracy risk, and the swap test (would the page still read fine for a sibling keyword?).",
+    what: "Code checks every draft against the in-memory index of published pages: shared phrases, copied sentences, similar meaning, similar FAQ questions, near-identical titles; plus rules (length, keyword in title, filler, over-claims, Pro features called free). Every error is tagged with the field it lives in.",
+    input: "The draft, its embeddings, the corpus index.", output: "Pass; or errors that are field-local (→ patch) or page-level (→ rewrite).",
+    example: "Image-to-text draft 1 failed: one FAQ asked the same thing as the handwriting page's (0.952). Field-local, so it went to Patch.", file: "src/pseo/quality.py, src/pseo/index.py, src/pseo/similarity.py",
+    fail: "After 3 failed fix attempts the page is quarantined." },
+  patch: { x: 940, y: 340, kind: "ai", badge: "AI", title: "4b Patch", sub: "only the broken fields",
+    what: "When every error lives in a few fields (an FAQ, the meta description, one sentence with a banned word), only those fields are rewritten and merged back. The output is a few hundred tokens instead of a whole page, and sections that already passed cannot break.",
+    input: "The page, the fields to fix, the exact errors, the siblings' FAQs.", output: "New values for just those fields.",
+    example: "Run #9: 3 patches (faqs ×2, feature_points ×1), each about 5 s, all passed on re-check.", file: "src/pseo/agents.py (patch), prompts/patch.md",
+    fail: "If the patched page still fails, the next attempt escalates to a full rewrite." },
+  editor: { x: 1400, y: 120, kind: "ai", badge: "AI", title: "5b Editor", sub: "second model",
+    what: "A different AI model reviews the page like a strict editor: specificity, usefulness, accuracy risk, and the swap test (would the page still read fine for a sibling keyword?). Runs only after the cheap code checks pass.",
     input: "The draft, its brief, sibling keywords.", output: "Scores 1–5, swap test pass/fail, concrete problems.",
-    example: "Final draft: specificity 5, usefulness 5, accuracy 5, swap test pass. Earlier it caught an invented 'OCR button' on another page.", file: "src/pseo/agents.py, prompts/judge.md",
-    fail: "Any score under 4 or a failed swap test sends the problems back to Write." },
+    example: "Run #9: all 12 pages scored 5/5/5 and passed the swap test.", file: "src/pseo/agents.py, prompts/judge.md",
+    fail: "Any score under 4 or a failed swap test sends the page back for a full rewrite." },
   quarantine: { x: 1170, y: 340, kind: "fail", badge: "✕", title: "Quarantine", sub: "held back",
-    what: "Where a page goes if it still fails after 2 revisions. It is not published, it is listed in the report, and the run alerts if too many end up here.",
+    what: "Where a page goes if it still fails after its fix attempts. It is not published, it is listed in the report, and the run alerts if too many end up here.",
     input: "The last failing draft and its errors.", output: "output/quarantine/<slug>.json for a human to look at.",
-    example: "0 pages quarantined in the final corpus.", file: "src/pseo/pipeline.py",
+    example: "0 pages quarantined.", file: "src/pseo/pipeline.py",
     fail: "More than 25% of attempted pages quarantined marks the run degraded (exit code 2 + alert)." },
-  store: { x: 940, y: 340, kind: "store", badge: "DB", title: "State (SQLite)", sub: "pipeline memory",
-    what: "Remembers every page: its inputs hash, content, word fingerprints, embeddings, FAQ vectors and every QA event. This is what makes runs incremental and lets checks compare against all pages ever published.",
-    input: "Saved pages and run events.", output: "The corpus for duplicate checks; the history for ./run.sh explain.",
-    example: "9 rejected drafts across all runs are recorded here, with reasons.", file: "src/pseo/store.py, state/pseo.sqlite",
+  store: { x: 710, y: 340, kind: "store", badge: "DB", title: "State (SQLite)", sub: "pipeline memory",
+    what: "Remembers every page: its input hash, content, fingerprints, embeddings, FAQ vectors and every QA event, plus an embedding cache. At the start of a run it is loaded into an in-memory index, so checks never re-read the database.",
+    input: "Saved pages, run events, cached vectors.", output: "The corpus index; the history for ./run.sh explain.",
+    example: "Every rejected draft across all runs is recorded here, with reasons.", file: "src/pseo/store.py, src/pseo/index.py, state/pseo.sqlite",
     fail: "Committed back to git after scheduled runs, so state is versioned with the pages." },
   save: { x: 1400, y: 340, kind: "code", badge: "✓", title: "Save page", sub: "status: passed",
-    what: "Stores the passing page with its input hash, so the next run skips it unless something it depends on changes.",
-    input: "The passing draft.", output: "A row in the database with status passed.", example: "convert-scanned-image-to-text saved after draft 3.", file: "src/pseo/pipeline.py",
+    what: "Stores the passing page with its input hash and adds it to the in-memory index, so pages written later are checked against it immediately.",
+    input: "The passing draft.", output: "A database row (status passed) and an index entry.", example: "convert-scanned-image-to-text saved after its FAQ patch.", file: "src/pseo/pipeline.py",
     fail: "—" },
   sweep: { x: 1400, y: 560, kind: "code", badge: "⇄", title: "6 Corpus sweep", sub: "all pairs",
-    what: "After all pages are written, compares every published page with every other one, including FAQ questions. Pages written in parallel never saw each other, and thresholds can change; this catches both.",
-    input: "Every published page.", output: "Clean, or the newer page of a clashing pair sent back to Write with the reason.",
-    example: "Flagged 2 FAQ questions shared with the handwriting page (0.948, 0.949). The page was revised and passed.", file: "src/pseo/pipeline.py (_sweep)",
+    what: "After all pages are written, compares every published page with every other, including FAQ questions. Meaning similarity for all pairs is one matrix product. Pages written in parallel never saw each other; this catches them. Above 2,000 pages it switches to MinHash-LSH candidates.",
+    input: "The corpus index.", output: "Clean, or the newer page of a clashing pair sent back (FAQ-only clash → patch; otherwise rewrite).",
+    example: "Run #9: clean. In run #6 it caught two duplicated FAQ questions and fixed them.", file: "src/pseo/pipeline.py (_sweep)",
     fail: "If the revision still clashes, that page is quarantined." },
   render: { x: 1170, y: 560, kind: "code", badge: "</>", title: "7 Render", sub: "HTML · MD · JSON",
     what: "Turns every passing page into HTML (with canonical URL and HowTo/FAQ structured data), Markdown and JSON, plus index.html and sitemap.xml. Only links to pages that are actually published.",
-    input: "Passed pages from the database.", output: "output/pages/, output/data/, sitemap.xml.", example: "convert-scanned-image-to-text.html, linked from 4 related pages.", file: "src/pseo/render.py, templates/",
+    input: "Passed pages from the database.", output: "output/pages/, output/data/, sitemap.xml.", example: "Linked from 3-4 related pages each.", file: "src/pseo/render.py, templates/",
     fail: "Re-runnable on its own with ./run.sh render (no AI calls)." },
-  report: { x: 940, y: 560, kind: "code", badge: "≡", title: "8 Report", sub: "report.md",
-    what: "Writes the run report: duplicate metrics for all 66 page pairs, editor scores, and every rejection and incident from every run.",
-    input: "The database.", output: "output/report.md, output/similarity.csv, output/runs/.", example: "Max shared wording 0.018 (limit 0.12). Closest meaning 0.929 (limit 0.93).", file: "src/pseo/report.py",
+  report: { x: 940, y: 560, kind: "code", badge: "≡", title: "8 Report", sub: "evidence + timings",
+    what: "Writes the run report: duplicate metrics for all 66 page pairs, editor scores, time per stage, calls and tokens, and every rejection and incident from every run.",
+    input: "The database.", output: "output/report.md, output/similarity.csv, output/runs/.", example: "Run #9: plan 49 s, write+check 182 s; 28 generation calls; max shared wording 0.015.", file: "src/pseo/report.py",
     fail: "A report bug marks the run degraded instead of hiding it." },
   alerts: { x: 710, y: 560, kind: "trigger", badge: "!", title: "Alerts", sub: "exit code, webhook",
     what: "Decides the run's status and tells someone. OK: heartbeat success. Degraded, aborted or crashed: Slack/Discord alert with reasons, heartbeat fail, non-zero exit code so the GitHub job fails.",
-    input: "Run status and problems.", output: "Exit code 0 / 1 / 2 / 3, webhook message, heartbeat ping.", example: "Run #1 aborted when the daily quota ran out; the next run finished only the 3 missing pages.", file: "src/pseo/ops.py, src/pseo/cli.py",
+    input: "Run status and problems.", output: "Exit code 0 / 1 / 2 / 3, webhook message, heartbeat ping.", example: "Run #1 aborted when the daily quota ran out; the next run finished only the missing pages.", file: "src/pseo/ops.py, src/pseo/cli.py",
     fail: "—" },
 };
 const W = 172, H = 64;
@@ -249,17 +256,18 @@ const EDGES = [
   { id: "e-pl-wr", d: () => hcurve(port("plan", "r"), port("write", "l")), label: "briefs", lx: 911, ly: 144 },
   { id: "e-wr-ch", d: () => hcurve(port("write", "r"), port("checks", "l")), label: "draft", lx: 1141, ly: 144 },
   { id: "e-ch-ed", d: () => hcurve(port("checks", "r"), port("editor", "l")), label: "pass", lx: 1371, ly: 144 },
-  { id: "e-ch-wr", d: () => "M1256,120 C1256,70 1040,70 1040,120", cls: "loop", label: "fail → errors as instructions", lx: 1148, ly: 70 },
-  { id: "e-ed-wr", d: () => "M1486,120 C1486,24 1010,24 1010,120", cls: "loop", label: "fail → editor's problems", lx: 1248, ly: 28 },
+  { id: "e-ch-wr", d: () => "M1256,120 C1256,70 1040,70 1040,120", cls: "loop", label: "page-level fail → rewrite", lx: 1148, ly: 70 },
+  { id: "e-ed-wr", d: () => "M1486,120 C1486,24 1010,24 1010,120", cls: "loop", label: "editor fail → rewrite", lx: 1248, ly: 28 },
+  { id: "e-ch-pa", d: () => "M1200,184 C1200,280 1100,290 1080,340", cls: "loop", label: "field-local fail", lx: 1112, ly: 262 },
+  { id: "e-pa-ch", d: () => "M1112,384 C1180,300 1240,250 1240,184", cls: "loop data", label: "re-check", lx: 1236, ly: 236 },
   { id: "e-ed-sv", d: () => vcurve(port("editor", "b"), port("save", "t")), label: "pass", lx: 1486, ly: 266 },
-  { id: "e-ch-q", d: () => vcurve([1290, 184], [1290, 340]), cls: "loop data", label: "after 2 revisions", lx: 1290, ly: 290 },
-  { id: "e-ed-q", d: () => "M1420,184 C1400,260 1380,300 1342,360", cls: "loop data" },
-  { id: "e-st-ch", d: () => "M1080,340 C1080,280 1200,260 1200,184", cls: "data", label: "corpus", lx: 1176, ly: 300 },
-  { id: "e-sv-st", d: () => "M1430,404 C1430,470 1040,470 1040,404", cls: "data", label: "writes page", lx: 1236, ly: 462 },
-  { id: "e-fa-pl", d: () => "M566,340 C566,260 796,270 796,184", cls: "data", label: "all facts", lx: 640, ly: 258 },
-  { id: "e-fa-wr", d: () => "M652,350 C800,335 990,300 1000,184", cls: "data", label: "its facts only", lx: 840, ly: 322 },
-  { id: "e-sv-sw", d: () => vcurve(port("save", "b"), port("sweep", "t")), label: "after all pages", lx: 1486, ly: 512 },
-  { id: "e-sw-wr", d: () => "M1420,560 C1390,505 1141,520 1141,450 L1141,240 C1141,205 1100,200 1090,184", cls: "loop", label: "clash → revise newer page", lx: 1141, ly: 520 },
+  { id: "e-ch-q", d: () => vcurve([1300, 184], [1300, 340]), cls: "loop data", label: "out of attempts", lx: 1330, ly: 300 },
+  { id: "e-st-ch", d: () => "M820,340 C820,262 1150,262 1180,184", cls: "data", label: "corpus index", lx: 905, ly: 262 },
+  { id: "e-sv-st", d: () => "M1430,404 C1430,490 796,490 796,404", cls: "data", label: "writes page + index", lx: 1000, ly: 484 },
+  { id: "e-fa-pl", d: () => "M540,340 C540,260 796,270 796,184", cls: "data", label: "all facts", lx: 560, ly: 262 },
+  { id: "e-fa-wr", d: () => "M630,340 C660,230 990,240 1000,184", cls: "data", label: "its facts only", lx: 760, ly: 230 },
+  { id: "e-sv-sw", d: () => vcurve(port("save", "b"), port("sweep", "t")), label: "after all pages", lx: 1486, ly: 520 },
+  { id: "e-sw-wr", d: () => "M1420,560 C1390,515 1141,530 1141,450 L1141,240 C1141,205 1100,200 1090,184", cls: "loop", label: "clash → revise newer page", lx: 1262, ly: 536 },
   { id: "e-sw-rd", d: () => hcurve(port("sweep", "l"), port("render", "r")), label: "clean", lx: 1371, ly: 586 },
   { id: "e-rd-rp", d: () => hcurve(port("render", "l"), port("report", "r")), label: "pages", lx: 1141, ly: 586 },
   { id: "e-rp-al", d: () => hcurve(port("report", "l"), port("alerts", "r")), label: "status", lx: 911, ly: 586 },
@@ -274,6 +282,10 @@ const defs = el("defs");
   const m = el("marker", { id, viewBox: "0 0 10 10", refX: "9", refY: "5", markerWidth: "7", markerHeight: "7", orient: "auto-start-reverse" }, defs);
   el("path", { d: "M0,0 L10,5 L0,10 z", style: `fill:${c}` }, m);
 });
+const grp = el("g");
+el("rect", { x: 925, y: 96, width: 662, height: 338, rx: 16, class: "group" }, grp);
+const gl = el("text", { x: 937, y: 426, class: "glabel" }, grp);
+gl.textContent = "per page · up to 4 pages in parallel · siblings never in flight together";
 const edgeEls = {};
 const gEdges = el("g");
 EDGES.forEach(e => {
@@ -324,26 +336,19 @@ select("checks");
 
 // replay of one keyword (real stored history, condensed)
 const STEPS = [
-  { node: "trigger", tag: "info", text: "Run #3 starts: 3 pages to generate, 9 unchanged (skipped)." },
+  { node: "trigger", tag: "info", text: "Run #9 starts: all 12 pages rebuilt on the new architecture (4 workers)." },
   { node: "ingest", edge: "e-tr-in", tag: "info", text: "\"convert scanned image to text\" → /convert-scanned-image-to-text · intent conversion · image → text" },
-  { node: "cluster", edge: "e-in-cl", tag: "info", text: "Closest keyword: OCR handwriting iPhone. Must be planned apart." },
-  { node: "plan", edge: "e-cl-pl", tag: "info", text: "Angle: printed text → .txt or clipboard, on-device. Handwriting is left to /ocr-handwriting-iphone." },
-  { node: "write", edge: "e-pl-wr", tag: "info", text: "Draft 1 written (1,007 words)." },
-  { node: "checks", edge: "e-wr-ch", tag: "bad", st: "fail", text: "REJECTED: too close in meaning to /ocr-handwriting-iphone (0.932, limit 0.93)." },
-  { node: "write", edge: "e-ch-wr", tag: "info", text: "Draft 2: revised with those reasons." },
-  { node: "checks", edge: "e-wr-ch", tag: "bad", st: "fail", text: "REJECTED again: 0.931. One revision left before quarantine." },
-  { node: "write", edge: "e-ch-wr", tag: "info", text: "Draft 3: revised again." },
-  { node: "checks", edge: "e-wr-ch", tag: "ok", st: "pass", text: "PASSED: shared wording 0.008, meaning 0.927, 0 copied sentences." },
-  { node: "editor", edge: "e-ch-ed", tag: "ok", st: "pass", text: "PASSED: specificity 5, usefulness 5, accuracy 5, swap test pass." },
-  { node: "save", edge: "e-ed-sv", tag: "ok", st: "pass", text: "Saved with its input hash. Later runs skip it unless an input changes." },
-  { node: "sweep", edge: "e-sv-sw", tag: "flag", st: "flag", text: "Run #6 sweep FLAGGED: 2 FAQ questions ask the same thing as the handwriting page's (0.948, 0.949)." },
-  { node: "write", edge: "e-sw-wr", tag: "info", text: "Revised with page-specific FAQ questions." },
-  { node: "checks", edge: "e-wr-ch", tag: "ok", st: "pass", text: "PASSED." },
-  { node: "editor", edge: "e-ch-ed", tag: "ok", st: "pass", text: "PASSED." },
-  { node: "save", edge: "e-ed-sv", tag: "ok", st: "pass", text: "Saved." },
-  { node: "sweep", edge: "e-sv-sw", tag: "ok", st: "pass", text: "Clean: no pair over any limit." },
-  { node: "render", edge: "e-sw-rd", tag: "info", text: "HTML + Markdown + JSON written; linked from 4 related pages." },
-  { node: "report", edge: "e-rd-rp", tag: "info", text: "report.md: max shared wording 0.018, closest meaning 0.929." },
+  { node: "cluster", edge: "e-in-cl", tag: "info", text: "Keyword vectors from cache. Closest keyword: OCR handwriting iPhone, so the two are never written at the same time." },
+  { node: "plan", edge: "e-cl-pl", tag: "info", text: "All 12 briefs in one 49 s call. Angle: printed text → .txt or clipboard; handwriting belongs to /ocr-handwriting-iphone." },
+  { node: "write", edge: "e-pl-wr", tag: "info", text: "Fast first draft (low reasoning) while 3 other non-sibling pages are written in parallel. The prompt lists the handwriting page's FAQ questions." },
+  { node: "checks", edge: "e-wr-ch", tag: "bad", st: "fail", text: "REJECTED: one FAQ still asks the same thing as the handwriting page's (0.952). Error lives in one field: faqs." },
+  { node: "patch", edge: "e-ch-pa", tag: "info", text: "Patch: only the faqs field is rewritten (~5 s, a few hundred tokens). Nothing else on the page changes." },
+  { node: "checks", edge: "e-pa-ch", tag: "ok", st: "pass", text: "PASSED: shared wording 0.015, meaning 0.930 vs its closest page, 0 copied sentences, no FAQ clashes." },
+  { node: "editor", edge: "e-ch-ed", tag: "ok", st: "pass", text: "PASSED: specificity 5, usefulness 5, accuracy 5, swap test pass (fallback model, after the first editor model hit its daily quota)." },
+  { node: "save", edge: "e-ed-sv", tag: "ok", st: "pass", text: "Saved and added to the in-memory index; pages still being written are checked against it from now on." },
+  { node: "sweep", edge: "e-sv-sw", tag: "ok", st: "pass", text: "Whole-set re-check of all 66 pairs: clean." },
+  { node: "render", edge: "e-sw-rd", tag: "info", text: "HTML + Markdown + JSON written; linked from related pages." },
+  { node: "report", edge: "e-rd-rp", tag: "info", text: "Run #9: 232 s total, 28 generation calls, 3 patches, 0 full rewrites, 0 quarantined." },
   { node: "alerts", edge: "e-rp-al", tag: "ok", st: "pass", text: "Status ok → heartbeat success, exit code 0, no alert." },
 ];
 const consoleEl = document.getElementById("console");
@@ -398,5 +403,3 @@ playBtn.addEventListener("click", () => {
 document.getElementById("step").addEventListener("click", () => { if (timer) stop(); if (i >= STEPS.length) i = 0; step(); });
 document.getElementById("reset").addEventListener("click", () => { stop(); i = 0; clearMarks(); consoleEl.innerHTML = '<span class="empty">Press Play or Step to start.</span>'; select("checks"); });
 </script>
-
-</html>

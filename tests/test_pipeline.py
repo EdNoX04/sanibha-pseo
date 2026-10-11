@@ -23,6 +23,7 @@ def cfg(tmp_path, monkeypatch):
     monkeypatch.delenv("PSEO_ALERT_WEBHOOK", raising=False)
     c = load_config()
     c.raw["llm"]["provider"] = "mock"
+    c.raw["pipeline"]["workers"] = 1   # deterministic order; parallelism has its own test
     return c
 
 
@@ -142,7 +143,8 @@ def test_model_fallback_chain():
     from pseo.llm import GeminiProvider, ModelOverloaded, QuotaExhausted, Usage
 
     p = object.__new__(GeminiProvider)
-    p.usage, p.exhausted, p.has_fallback = Usage(), set(), False
+    import threading
+    p.usage, p.exhausted, p._tls = Usage(), set(), threading.local()
     calls = []
 
     def fake(*, task, model, **kw):
@@ -206,12 +208,13 @@ def test_circuit_breaker_stops_but_still_publishes(cfg):
     pipe = Pipeline(cfg, DiesAfterFour())
     res = pipe.run()
     assert res["status"] == "aborted"
-    assert pipe.stats["failed"] == 3 and pipe.stats["passed"] == 4
+    # with parallel workers, pages already in flight when the breaker trips also finish/fail
+    assert pipe.stats["failed"] >= 3 and pipe.stats["passed"] == 4
     pages = {p.stem for p in (cfg.path("output_dir") / "pages").glob("*.html")} - {"index"}
     assert len(pages) == 4
     # next run picks up exactly the pages that never got written
     res2 = Pipeline(cfg, MockProvider()).run()
-    assert res2["status"] == "ok" and res2["attempted"] == 8
+    assert res2["status"] == "ok" and res2["attempted"] == 12 - 4
 
 
 def test_fact_edit_regenerates_only_pages_using_it(cfg, tmp_path):
@@ -259,9 +262,12 @@ def test_quality_gates_on_a_single_page():
         tips_heading="Conversion tips", tips=["t1", "t2", "t3"],
         faqs=[FAQ(question="Can I copy recognized text and export it as txt?", answer="a")] * 4,
         cta=CTA(heading="h", text="t"))
-    corpus = [{"slug": "other", "body_text": "", "shingles": set(), "embedding": None, "title": "Other",
-               "meta": "m", "headings": [], "faqs": ["Can you copy the recognized text or export a txt file?"]}]
-    qa = check_page(page, rec, brief, app, corpus, None, cfg)
+    from pseo.index import CorpusIndex
+
+    index = CorpusIndex()
+    index.put("other", {"slug": "other", "body_text": "", "shingles": set(), "embedding": None, "title": "Other",
+                        "meta": "m", "headings": [], "faqs": ["Can you copy the recognized text or export a txt file?"]})
+    qa = check_page(page, rec, brief, app, index, None, cfg)
     text = " | ".join(qa.errors)
     assert not qa.passed
     assert "over-claim" in text and "banned filler" in text and "Pro feature" in text
@@ -273,8 +279,9 @@ def test_explain_tells_the_story_of_a_page(cfg):
 
     pipe = Pipeline(cfg, MockProvider(misbehave="duplicate"))
     pipe.run()
-    out = explain(pipe.store, "convert PDF to Word free")
-    assert "3 PLAN" in out and "REJECTED" in out and "PASSED" in out and "FINAL PAGE" in out
+    outs = [explain(pipe.store, p["slug"]) for p in pipe.store.pages("passed")]
+    assert all("3 PLAN" in o and "PASSED" in o and "FINAL PAGE" in o for o in outs)
+    assert any("REJECTED" in o for o in outs)
     assert "convert-pdf-to-word-free" in explain(pipe.store, None)
 
 
@@ -303,3 +310,74 @@ def test_keyword_commands_edit_the_list_and_the_next_run_follows(cfg, tmp_path):
     pages = {p.stem for p in (cfg.path("output_dir") / "pages").glob("*.html")} - {"index"}
     assert "save-scans-to-dropbox" in pages and "save-scanned-documents-to-google-drive" not in pages
     assert "retired" in ka.listing(kw, pipe.store).lower()
+
+
+def test_parallel_scheduler_is_faster_and_never_runs_siblings_together(cfg):
+    """4 workers with simulated API latency: same 12 pages, less wall time, and two pages that
+    share territory (siblings / topic owners) are never generated at the same moment."""
+    import threading
+    import time as _t
+
+    lat = {"plan": 0.05, "write": 0.12, "revise": 0.12, "patch": 0.04, "judge": 0.04, "embed": 0.01}
+
+    def timed(workers):
+        c = load_config()
+        c.raw = {**cfg.raw, "pipeline": {**cfg.raw["pipeline"], "workers": workers}}
+        c.raw["paths"] = dict(cfg.raw["paths"])
+        base = cfg.path("state_db").parent
+        c.raw["paths"]["state_db"] = str(base / f"w{workers}.sqlite")
+        c.raw["paths"]["output_dir"] = str(base / f"out{workers}")
+        c.raw["paths"]["lock_file"] = str(base / f"lock{workers}")
+        pipe = Pipeline(c, MockProvider(latency=lat))
+        in_flight, overlaps, lock = set(), [], threading.Lock()
+        orig = pipe._generate_page
+
+        def spy(rec, briefs, by_slug, sweep_feedback=None):
+            b = briefs[rec.slug]
+            near = set(rec.siblings) | {e.owner_slug for e in b.exclusions}
+            with lock:
+                clash = {s for s in in_flight if s in near or rec.slug in pipe._near.get(s, set())}
+                if clash:
+                    overlaps.append((rec.slug, clash))
+                in_flight.add(rec.slug)
+                pipe._near[rec.slug] = near
+            try:
+                return orig(rec, briefs, by_slug, sweep_feedback)
+            finally:
+                with lock:
+                    in_flight.discard(rec.slug)
+
+        pipe._near = {}
+        pipe._generate_page = spy
+        t0 = _t.time()
+        res = pipe.run()
+        return _t.time() - t0, res, overlaps
+
+    t1, r1, _ = timed(1)
+    t4, r4, overlaps = timed(4)
+    assert r1["status"] == r4["status"] == "ok"
+    assert r4["rendered"]["published"] == 12
+    assert not overlaps, overlaps
+    assert t4 < t1 * 0.75, (t1, t4)
+
+
+def test_field_local_errors_are_patched_not_rewritten(cfg, monkeypatch):
+    """A draft whose only problem is a too-long meta description gets a patch of that one field."""
+    from pseo import quality
+
+    calls = []
+    real = quality.check_page
+
+    def flaky(c, rec, *a, **k):
+        qa = real(c, rec, *a, **k)
+        if rec.slug == "sign-pdf-on-iphone-free" and not calls:
+            calls.append(1)
+            qa.passed, qa.errors, qa.fix_fields, qa.page_level = False, ["meta_description is 170 chars"], ["meta_description"], False
+        return qa
+
+    monkeypatch.setattr("pseo.pipeline.check_page", flaky)
+    prov = MockProvider()
+    pipe = Pipeline(cfg, prov)
+    assert pipe.run()["status"] == "ok"
+    assert prov.usage.by_task.get("patch") == 1 and pipe.stats["patches"] == 1
+    assert prov.usage.by_task.get("revise", 0) == 0

@@ -29,27 +29,27 @@
   "brief": {
     "slug": "sign-pdf-on-iphone-free",
     "intent_type": "task_howto",
-    "searcher_goal": "Add a signature and complete required form fields on a PDF using an iPhone without paying for an app subscription.",
-    "scenario": "A person receives a lease agreement, work contract, or permission slip by email and needs to sign, date, and return it quickly from their iPhone without printing or paying for Adobe.",
-    "unique_angle": "Shows how to create, save, resize, and position a signature plus form fields (dates, checkmarks, text) for free, contrasting it directly with built-in Apple Markup.",
+    "searcher_goal": "Fill and draw a signature on a PDF form on an iPhone without paying for subscription software.",
+    "scenario": "A landlord emails you a rental agreement PDF that must be signed, dated, and returned before the end of the day.",
+    "unique_angle": "Shows how to create, resize, and reuse signatures along with adding form text and dates on iPhone, comparing the app with native iOS Markup.",
     "must_answer": [
-      "Can you sign and fill out a PDF on iPhone completely free without paying for a subscription?",
-      "How do you create and save a signature using your finger or Apple Pencil in Document Scanner & PDF Toolkit?",
-      "Can you add dates, checkmarks, and custom text to fill PDF form fields?",
-      "How do you sign a PDF using built-in iOS Markup in Files or Mail?",
-      "How do you email or share the completed, signed document from your iPhone?"
+      "Can I draw and save a reusable signature on iPhone for free?",
+      "How do I add dates, checkmarks, and custom text to a PDF form?",
+      "How do I sign a PDF using the built-in iOS Markup tool?",
+      "Can I use my finger or an Apple Pencil to sign forms?",
+      "Are signed documents kept safe on my device without cloud uploads?"
     ],
     "exclusions": [
       {
-        "topic": "Reducing PDF attachment size to fit email provider limits",
+        "topic": "Compressing signed PDF files before emailing",
         "owner_slug": "compress-pdf-file-size-free"
       },
       {
-        "topic": "Converting PDFs to editable Word documents",
+        "topic": "Converting PDF files to Word documents",
         "owner_slug": "convert-pdf-to-word-free"
       },
       {
-        "topic": "Overview of general free scanning and batch capture limits",
+        "topic": "Evaluating general scanning features in free scanner apps",
         "owner_slug": "best-free-pdf-scanner-app"
       }
     ],
@@ -60,117 +60,110 @@
     ],
     "platform_fact_ids": [
       "ios_markup_sign",
-      "email_limits"
+      "online_converters"
     ],
     "related_slugs": [
-      "compress-pdf-file-size-free",
       "best-free-pdf-scanner-app",
+      "compress-pdf-file-size-free",
       "convert-pdf-to-word-free"
     ],
     "ambiguity_note": ""
   },
   "content": {
-    "title": "How to Sign a PDF on iPhone for Free",
-    "meta_description": "Learn how to sign, date, and fill out PDF forms on your iPhone for free using on-device tools or Apple Markup. No paid subscriptions required.",
-    "h1": "How to Sign and Fill Out a PDF on iPhone for Free",
-    "quick_answer": "You can sign a PDF on iPhone for free using the built-in Markup tool in Files or Mail, or by using Document Scanner & PDF Toolkit. Both options let you draw a signature, place it on the document, and return the completed file without buying a paid subscription or uploading your file to external servers.",
+    "title": "How to Sign a PDF on iPhone Free",
+    "meta_description": "Sign PDF forms, add dates, checkmarks, and custom text on your iPhone for free using on-device tools or iOS Markup without monthly fees.",
+    "h1": "How to Sign and Fill a PDF on iPhone for Free",
+    "quick_answer": "You can sign a PDF on iPhone for free using Document Scanner & PDF Toolkit or built-in iOS Markup. Draw your signature using your finger or Apple Pencil, position it on the line, and add dates, text, or checkmarks. Processing runs on your device without subscription fees or forced cloud uploads.",
     "intro": [
-      "You receive a lease agreement, work contract, or permission slip by email. Printing, signing by hand, and scanning it back takes time you do not have, while many third-party PDF tools demand expensive monthly subscriptions just to place a single signature.",
-      "You can complete, sign, and date the entire document directly on your iPhone without paying anything. Your device already includes basic native signing tools, and dedicated free apps can handle more complex form fields like checkmarks and reusable signatures.",
-      "This guide explains how to draw, save, resize, and position your signature, fill out required form fields, and send the signed PDF back immediately."
+      "Your landlord just emailed a rental agreement that requires your signature and today's date before the end of the day. You are away from a printer and computer, holding only your iPhone.",
+      "Signing forms on a mobile screen does not require an expensive paid subscription or creating accounts on third-party websites. iOS includes built-in tools for basic markup, while dedicated on-device apps make it easy to complete full forms with dates, checkmarks, and saved reusable signatures.",
+      "This guide covers how to fill and sign PDF agreements directly on your iPhone for free, maintain privacy by keeping files local, and quickly email the completed document back."
     ],
-    "steps_heading": "How to Sign and Fill a PDF with Document Scanner & PDF Toolkit",
+    "steps_heading": "How to Sign and Fill Forms with Document Scanner & PDF Toolkit",
     "steps": [
       {
-        "title": "Open the PDF in the app",
-        "detail": "Import your PDF from Files, Mail, or cloud storage. Make sure all pages render clearly before you begin placing signatures or form text."
+        "title": "Open the PDF document in the app",
+        "detail": "Import the PDF agreement from Mail, Files, or cloud storage into Document Scanner & PDF Toolkit. Verify that all pages display clearly before placing form fields."
       },
       {
-        "title": "Create your signature",
-        "detail": "Draw your signature on the screen using your finger or an Apple Pencil. Review the stroke for legibility, and save it in the app so you can reuse it later without redrawing."
+        "title": "Draw and create your signature",
+        "detail": "Select the signature option to draw your signature using your finger or an Apple Pencil on iPad. You can save this signature for reuse across future forms, so you do not need to redraw it every time."
       },
       {
-        "title": "Position and resize the signature",
-        "detail": "Tap your saved signature to place it onto the active page. Drag it into the signature line and adjust the size handles so it fits the field neatly without covering nearby text."
+        "title": "Place and resize the signature on the page",
+        "detail": "Drag the drawn signature to the designated signature line. Adjust the bounding box so the signature fits neatly above the line without overlapping surrounding legal text."
       },
       {
-        "title": "Add dates, checkmarks, and custom text",
-        "detail": "Tap the form tools to insert the current date, type custom text into blank form lines, and place checkmarks into agreement boxes. Make sure each element is positioned precisely within its form field."
+        "title": "Add required text, dates, and checkmarks",
+        "detail": "Insert text boxes for your full name, printed details, and the current date. Tap to place checkmarks inside agreement boxes, ensuring each required field is answered."
       },
       {
-        "title": "Share or export the completed PDF",
-        "detail": "Save the finished document as a PDF and share it via AirDrop, Mail, or Files, or save directly to iCloud Drive, Google Drive, or Dropbox. If you are emailing the file, note that email providers typically cap attachments at 20 to 25 MB."
+        "title": "Save and export the signed document",
+        "detail": "Export your completed agreement as a PDF to Mail, Files, AirDrop, or your chosen cloud storage. If your email client flags the final attachment as too large, you can compress the file size using a separate workflow before sending."
       }
     ],
-    "alternatives_heading": "Other Free Ways to Sign PDFs on iPhone",
+    "alternatives_heading": "Alternative Free Ways to Sign a PDF on iPhone",
     "alternatives": [
       {
-        "method": "iOS Markup in the Files App",
-        "how": "Open the PDF in the Files app, tap the Markup pen icon, tap the + button, and select Add Signature to draw and place a signature.",
-        "best_for": "Quickly signing a single agreement stored on your iPhone or iCloud Drive without installing additional software.",
-        "limitation": "Adding text boxes and checkmarks to multi-field forms can be clunky, and managing multiple saved signatures is limited."
+        "method": "Built-in iOS Markup in Files, Mail, or Photos",
+        "how": "Open the PDF in Files, Mail, or Photos, tap the Markup pen icon, tap the + button, and select Add Signature to draw and place your name.",
+        "best_for": "Quick one-time signatures when you only need to sign a single line without complex form-filling tools.",
+        "limitation": "Adding text fields, dates, and checkmarks can feel clunky in the native interface compared to dedicated PDF form tools."
       },
       {
-        "method": "iOS Markup in Mail",
-        "how": "Tap the PDF attachment inside an incoming email, tap the Markup pen icon in the upper corner, tap +, and choose Add Signature.",
-        "best_for": "Signing and replying to an email attachment immediately without downloading the file to a separate folder first.",
-        "limitation": "It is designed strictly for replying to messages and does not offer dedicated tools for reusable form fields or saving files into structured expense folders."
-      },
-      {
-        "method": "Free Online PDF Converters",
-        "how": "Upload your PDF to an online web tool through Safari, draw or type a signature, and download the finished file.",
-        "best_for": "Users working across different operating systems who prefer web browser workflows.",
-        "limitation": "Online tools require uploading documents to a third-party server, which creates privacy risks for contracts, IDs, and financial records, and free tiers often restrict daily usage."
+        "method": "Free online web-based PDF signing tools",
+        "how": "Upload your PDF to an online browser tool via Safari, draw a signature on-screen, and download the finished file.",
+        "best_for": "Users working on unsupported operating systems who lack built-in PDF tools.",
+        "limitation": "Requires uploading your document to a third-party server, raising privacy risks for sensitive rental agreements and IDs, while free tiers often restrict daily use."
       }
     ],
-    "features_heading": "Why Use Document Scanner & PDF Toolkit to Sign Forms",
+    "features_heading": "Document Scanner & PDF Toolkit Features for Signing Forms",
     "feature_points": [
       {
         "feature_id": "sign_pdf",
-        "benefit": "Draw your signature once with a finger or Apple Pencil, save it for future documents, resize it on any page, and insert typed text, dates, and checkmarks."
+        "benefit": "Draw your signature once, save it for reuse, resize it to fit cramped signature boxes, and insert accompanying dates, text, and checkmarks directly onto forms."
       },
       {
         "feature_id": "privacy_ondevice",
-        "benefit": "Your contracts and personal signatures are processed on-device and stored locally, ensuring sensitive agreements are never sent to third-party cloud servers."
+        "benefit": "All form filling and signature placement run entirely on your iPhone, keeping your sensitive lease terms, banking details, and personal records securely on your local storage."
       },
       {
         "feature_id": "share_export",
-        "benefit": "Export your finalized PDF directly to Mail, AirDrop, or Files, or store it into iCloud Drive, Google Drive, and Dropbox with a single tap."
+        "benefit": "Export signed PDF agreements directly back to Mail, AirDrop, Files, iCloud Drive, Google Drive, or Dropbox without adding watermarks or export restrictions."
       }
     ],
-    "tips_heading": "Tips for Signing and Filling PDF Forms on iOS",
+    "tips_heading": "Tips for Clean and Accurate Mobile PDF Signing",
     "tips": [
-      "Draw your signature deliberately across the screen to avoid jagged lines, or use an Apple Pencil on an iPad for finer stroke control.",
-      "Save your signature in the app once so you can quickly stamp future forms without redrawing your name every time.",
-      "Zoom into form boxes before placing dates and checkmarks to ensure alignment stays clean and readable.",
-      "If your signed document is too large for an email attachment, you can compress PDF file size using on-device compression presets.",
-      "If you need to make structural edits to the text rather than fill form fields, converting a PDF to Word is available as a Pro feature."
+      "Rotate your iPhone to landscape mode when drawing your signature to give your finger more horizontal screen space.",
+      "Use text boxes instead of handwriting for dates and names to ensure legal agreements remain legible for the recipient.",
+      "Double-check every page for initials boxes before exporting so you do not have to reopen the document to sign omitted sections.",
+      "If you ever need to turn a signed contract into a Word file, note that editable .docx conversion requires a dedicated Pro workflow rather than standard PDF export."
     ],
     "faqs": [
       {
-        "question": "Can you sign and fill out a PDF on iPhone completely free without paying for a subscription?",
-        "answer": "Yes. You can sign and fill PDFs for free using built-in iOS Markup or Document Scanner & PDF Toolkit. Both options allow you to draw signatures, add text, and save the PDF without purchasing an in-app subscription."
+        "question": "Can I draw and save a reusable signature on iPhone for free?",
+        "answer": "Yes. Document Scanner & PDF Toolkit allows you to draw your signature using your finger or an Apple Pencil and save it for future reuse at no cost. You can place and resize that saved signature on any subsequent document."
       },
       {
-        "question": "How do you create and save a signature using your finger or Apple Pencil?",
-        "answer": "In Document Scanner & PDF Toolkit, open the signing tool, draw your signature with your finger or Apple Pencil, and save it. Once saved, you can place, resize, and reuse that signature across any document without drawing it again."
+        "question": "How do I add dates, checkmarks, and custom text to a PDF form?",
+        "answer": "Using the free sign and fill tools in the app, you can place text fields directly over form lines to type your name or the date. You can also insert checkmarks to fill checkboxes throughout multi-page forms."
       },
       {
-        "question": "Can you add dates, checkmarks, and custom text to fill PDF form fields?",
-        "answer": "Yes. Document Scanner & PDF Toolkit includes tools to add custom text strings, dates, and checkmarks onto any page. You can drag and position each element directly inside the lines or checkboxes of the form."
+        "question": "How do I sign a PDF using the built-in iOS Markup tool?",
+        "answer": "Open the PDF document in Files, Mail, or Photos and tap the Markup pen icon. Then tap the + button in the toolbar and select Add Signature to draw a signature and insert it on the page."
       },
       {
-        "question": "How do you sign a PDF using built-in iOS Markup in Files or Mail?",
-        "answer": "Open the PDF inside the Files or Mail app and tap the Markup pen icon. Tap the + button, select Add Signature, draw your signature or choose an existing one, and drag it into position on the page."
+        "question": "Can I use my finger or an Apple Pencil to sign forms?",
+        "answer": "Yes. You can sketch your signature with your finger on any iPhone screen. If you are using an iPad, you can also use an Apple Pencil for finer line control."
       },
       {
-        "question": "How do you email or share the completed, signed document from your iPhone?",
-        "answer": "After signing the document, use the share menu to send it via Mail, AirDrop, or Messages. You can also save it directly to Files or cloud services like iCloud Drive, Google Drive, and Dropbox."
+        "question": "Are signed documents kept safe on my device without cloud uploads?",
+        "answer": "Yes. Document Scanner & PDF Toolkit processes signatures and edits locally on your device. Your documents are not uploaded to external servers and remain stored on your iPhone unless you manually choose an external cloud destination."
       }
     ],
     "cta": {
-      "heading": "Sign and Return Your PDFs in Seconds",
-      "text": "Download Document Scanner & PDF Toolkit on your iPhone or iPad to create reusable signatures, fill form checkboxes, and share completed agreements for free."
+      "heading": "Sign and Return Your PDF Forms in Minutes",
+      "text": "Download Document Scanner & PDF Toolkit on your iPhone to fill text, place checkmarks, and add your signature for free without leaving your phone."
     }
   },
   "qa": {
@@ -178,17 +171,21 @@
     "errors": [],
     "warnings": [],
     "metrics": {
-      "words": 1059,
+      "words": 957,
       "keyword_coverage": 1.0,
-      "max_jaccard": 0.0112,
+      "max_jaccard": 0.0061,
       "max_jaccard_with": "convert-pdf-to-word-free",
-      "max_cosine": 0.8878,
+      "max_cosine": 0.8797,
       "max_cosine_with": "scan-document-without-an-app",
       "shared_sentences": 0,
-      "writer_model": "gemini-3.8-flash",
-      "judge_model": "gemini-3.5-flash"
+      "compared_with": 4,
+      "writer_model": "gemini-3.7-flash",
+      "mode": "draft",
+      "judge_model": "gemini-3.5-flash-lite"
     },
-    "overlaps": []
+    "overlaps": [],
+    "fix_fields": [],
+    "page_level": false
   },
   "judge": {
     "specificity": 5,
@@ -198,5 +195,5 @@
     "problems": []
   },
   "attempts": 1,
-  "input_hash": "43ea22c8f232cce6"
+  "input_hash": "d4f7f80348b01bc1"
 }

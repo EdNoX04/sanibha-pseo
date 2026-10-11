@@ -128,3 +128,7 @@ class QAResult(BaseModel):
     warnings: list[str] = Field(default_factory=list)
     metrics: dict = Field(default_factory=dict)
     overlaps: list[str] = Field(default_factory=list)   # verbatim sentences shared with other pages
+    # Which PageContent fields the errors live in. When every error is local to a few fields the
+    # reviser patches just those fields (small, fast call); page-level errors force a full rewrite.
+    fix_fields: list[str] = Field(default_factory=list)
+    page_level: bool = False

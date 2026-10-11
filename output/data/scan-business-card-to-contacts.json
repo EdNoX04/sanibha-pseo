@@ -31,28 +31,28 @@
   "brief": {
     "slug": "scan-business-card-to-contacts",
     "intent_type": "task_howto",
-    "searcher_goal": "Scan a paper business card using an iPhone camera and convert the contact details directly into a new iOS Contacts entry.",
-    "scenario": "A professional returns from a networking event or client meeting with a stack of paper business cards and wants to quickly log names, phone numbers, and emails into their iPhone contacts without typing them line by line.",
-    "unique_angle": "Covers dedicated business card scanning with OCR field extraction (name, company, phone, email, address) and manual review before adding to iOS Contacts, alongside iOS Live Text detection limits.",
+    "searcher_goal": "Scan a paper business card with an iPhone camera and turn its printed contact details directly into an iOS address book contact.",
+    "scenario": "You returned from an industry conference with twenty paper business cards and want to save names, emails, and phone numbers into your iPhone Contacts without manual entry.",
+    "unique_angle": "Dedicated walkthrough of Business Card mode with automatic field mapping and pre-save contact review, compared against manual Live Text tapping.",
     "must_answer": [
-      "How does the app read business card details and create an iOS contact entry?",
-      "Can you review and edit the parsed contact fields before saving them to your iPhone address book?",
-      "Does scanning business cards require an internet connection or cloud account?",
-      "How do you use iOS Live Text in the Camera app to detect phone numbers and emails on a card?",
-      "Why is dedicated card scanning faster than entering details manually?"
+      "How do I scan a business card directly into Apple Contacts?",
+      "Which contact fields does the scanner recognise automatically?",
+      "Can I review and edit the contact details before saving them to iOS Contacts?",
+      "How can I use iOS Live Text to add a phone number or email from a card?",
+      "Are business card details processed on my iPhone or sent to a server?"
     ],
     "exclusions": [
       {
-        "topic": "Scanning thermal paper receipts and expense organization",
+        "topic": "Capturing expense receipts and tracking tax paperwork",
         "owner_slug": "scan-receipt-on-iphone"
       },
       {
-        "topic": "Scanning documents to PDF using native iOS Notes and Files",
-        "owner_slug": "scan-document-without-an-app"
+        "topic": "Extracting general full-page body text with OCR",
+        "owner_slug": "convert-scanned-image-to-text"
       },
       {
-        "topic": "Standard document OCR and general text extraction to .txt",
-        "owner_slug": "convert-scanned-image-to-text"
+        "topic": "Scanning regular documents without installing an app",
+        "owner_slug": "scan-document-without-an-app"
       }
     ],
     "feature_ids": [
@@ -62,8 +62,7 @@
       "privacy_ondevice"
     ],
     "platform_fact_ids": [
-      "ios_live_text",
-      "ios_notes_scan"
+      "ios_live_text"
     ],
     "related_slugs": [
       "scan-receipt-on-iphone",
@@ -74,103 +73,99 @@
   },
   "content": {
     "title": "Scan Business Card to Contacts on iPhone",
-    "meta_description": "Scan paper business cards with your iPhone camera, parse text with on-device OCR, review fields, and save directly to iOS Contacts.",
+    "meta_description": "Scan paper business cards with your iPhone camera to instantly recognise names, phones, and emails and create reviewed iOS Contacts.",
     "h1": "How to Scan a Business Card Directly to iPhone Contacts",
-    "quick_answer": "To scan a business card to iPhone contacts, use Document Scanner & PDF Toolkit's business card mode. Position the card in the camera view to capture it. The app runs on-device OCR to extract the name, company, phone, email, and address, letting you review each field before saving directly to iOS Contacts.",
+    "quick_answer": "To scan a business card into iPhone Contacts, point your camera at the card using a scanner app with business card recognition. The app uses on-device OCR to extract the name, company, phone number, email address, and physical address, letting you review and edit the details before saving the new contact directly to iOS.",
     "intro": [
-      "Returning from a networking conference or client visit often leaves you with a stack of paper business cards. Entering each name, job title, phone number, and email address by hand into your phone takes time and frequently leads to typos.",
-      "You can scan cards straight to your iPhone address book using dedicated card capture tools or built-in Apple features. This guide walks through scanning a card, extracting its contact details with on-device optical character recognition (OCR), reviewing the parsed information, and saving the contact to your device.",
-      "If you need to archive multi-page paperwork or process thermal store receipts instead, see our dedicated guides on scanning documents without an app or managing receipts on iPhone."
+      "Returning from an industry conference with a stack of twenty paper business cards often leads to an evening of tedious typing. Manually keying names, phone numbers, and job titles into an iPhone address book takes time and invites typos.",
+      "Using an iPhone camera to digitise cards streamlines the process. This guide covers how to capture cards, extract contact fields automatically with on-device recognition, verify the information, and save records straight into Apple Contacts.",
+      "If you instead need to save expense slips, see our guide on how to scan receipts on iPhone. For general full-page text extraction, read about converting scanned images to text, or explore how to scan documents without an app."
     ],
     "steps_heading": "Steps to Scan a Business Card into iOS Contacts",
     "steps": [
       {
-        "title": "Open Business Card Mode",
-        "detail": "Launch Document Scanner & PDF Toolkit and select the business card scanner. This mode configures the camera to recognise standard business card proportions rather than standard letter documents."
+        "title": "Position the card in good light",
+        "detail": "Place the business card flat on a contrasting surface so the edges stand out. Ensure light is even across the card to prevent reflections on glossy paper from obscuring fine text."
       },
       {
-        "title": "Position the Card in the Frame",
-        "detail": "Lay the business card flat on a contrasting surface, such as a dark desk. The automatic edge detection frames the card borders, straightens perspective, and triggers the capture without requiring manual cropping."
+        "title": "Capture the card using Business Card mode",
+        "detail": "Open Document Scanner & PDF Toolkit and choose the business card tool. Hold your iPhone steady over the card; automatic edge detection will identify the borders, crop the view, and straighten the perspective."
       },
       {
-        "title": "Let On-Device OCR Extract Details",
-        "detail": "The app reads the printed text directly on your iPhone. It automatically categorises the captured text into dedicated contact fields: full name, company name, telephone number, email address, and physical address."
+        "title": "Allow on-device OCR to read the text",
+        "detail": "The app reads the printed text locally on your iPhone. It categorises the detected text lines into standard fields: name, company, phone number, email, and address."
       },
       {
-        "title": "Review and Verify Parsed Fields",
-        "detail": "Examine the detected fields on your screen. Verify that numbers, domain names, and unusual surname spellings match the physical card, and edit any text line if necessary before saving."
-      },
-      {
-        "title": "Save Directly to Contacts",
-        "detail": "Confirm the contact details to generate a new iOS contact entry. The details transfer straight into your iPhone Contacts app without uploading your data to third-party servers."
+        "title": "Review the details before saving",
+        "detail": "Inspect the populated contact card on your screen. Check that unusual job titles or stylized company logos were not confused with names, and make any quick edits before tapping to save the entry directly into your iOS Contacts."
       }
     ],
-    "alternatives_heading": "Alternative Methods to Scan Business Cards on iOS",
+    "alternatives_heading": "Alternative Ways to Add Contacts from Paper Cards",
     "alternatives": [
       {
-        "method": "Apple Live Text in Camera or Photos",
-        "how": "Point your iPhone camera at the business card or open an existing photo of it. When the yellow Live Text bracket appears, tap the detected phone number or email address, then select Add to Contacts from the system pop-up menu.",
-        "best_for": "Quickly saving a single detail, such as an email address or mobile number from one card.",
-        "limitation": "Live Text detects isolated data points rather than a unified business card record. You must tap the email, phone, and name individually to combine them into one contact, which slows down bulk entry."
+        "method": "Apple Live Text in the Camera or Photos app",
+        "how": "Point your iPhone Camera at the card on iOS 15 or later. Tap the Live Text icon when it appears, tap the detected phone number or email address, and select the prompt to add it to your contacts.",
+        "best_for": "Adding a single phone number or email address quickly without installing an app.",
+        "limitation": "Live Text detects individual data strings rather than creating a complete contact record in one tap, requiring you to copy and paste names, titles, and addresses separately."
       },
       {
-        "method": "Document Scanning in iOS Notes",
-        "how": "Open the Notes app, create a new note, tap the camera icon, and choose Scan Documents. Capture the card, save the PDF inside the note, and tap the scanned text to highlight phone numbers or email addresses.",
-        "best_for": "Keeping a visual digital archive of physical cards inside a notebook.",
-        "limitation": "Notes saves the card merely as an embedded PDF. It does not parse business card fields automatically into structured contact cards."
+        "method": "Manual entry into the iOS Contacts app",
+        "how": "Open the native Contacts app on your iPhone, tap the plus icon, and type the name, company, phone number, and email address by hand from the paper card.",
+        "best_for": "Cards with artistic fonts, vertical text layouts, or embossed logos that optical readers struggle to decipher.",
+        "limitation": "It is slow, repetitive, and prone to typographical errors when processing multiple cards from events."
       }
     ],
-    "features_heading": "App Features Built for Business Card Capture",
+    "features_heading": "Core Scanning Features for Business Cards",
     "feature_points": [
       {
         "feature_id": "business_card",
-        "benefit": "Extracts name, company, phone, email, and address from the card layout into dedicated fields and lets you review every entry before creating the iOS contact."
+        "benefit": "Extracts the contact's name, company, phone number, email, and physical address automatically and generates a ready-to-review iOS contact card."
       },
       {
         "feature_id": "auto_edge",
-        "benefit": "Finds card borders automatically against dark or textured desks, perspective-correcting angled shots so text aligns cleanly for the OCR engine."
+        "benefit": "Finds the small borders of standard cards instantly, cropping out table backgrounds and correcting slight angles."
       },
       {
         "feature_id": "ocr",
-        "benefit": "Recognises printed text locally to turn visual typography into accurate text characters, eliminating manual data entry."
+        "benefit": "Extracts printed contact details directly on the iPhone with high accuracy, without requiring manual transcription."
       },
       {
         "feature_id": "privacy_ondevice",
-        "benefit": "Processes card data and business contacts strictly on your iPhone, ensuring private client phone numbers and emails never leave your device."
+        "benefit": "Ensures personal contact data, phone numbers, and corporate emails never leave your phone, keeping client records private."
       }
     ],
-    "tips_heading": "Tips for Accurate Business Card Scanning",
+    "tips_heading": "Tips for Accurately Scanning Business Cards",
     "tips": [
-      "Place light-coloured cards on a dark, non-reflective background so automatic edge detection can isolate the card boundaries instantly.",
-      "Avoid direct overhead glare from desk lamps, which can wash out glossy business cards and obscure digits in phone numbers or email addresses.",
-      "Check corporate email domains and punctuation closely during the review step, as stylized fonts or minimalist graphic logos can occasionally mislead OCR character recognition.",
-      "If a contact uses handwritten notes on the back of the card, remember that OCR accuracy on handwriting depends on how neat and high-contrast the script is; printed text remains significantly more reliable."
+      "Use a dark, non-reflective background when capturing white or light-coloured cards to ensure automatic edge detection crops cleanly.",
+      "Watch out for glare from overhead lights on glossy finishes or metallic foil lettering, as reflections can cause OCR reading errors.",
+      "Always verify phone country codes and extension numbers, as unconventional formatting on modern cards may require minor manual adjustment.",
+      "If a card features text on both sides, check the back for direct extension numbers or secondary addresses before filing the paper away."
     ],
     "faqs": [
       {
-        "question": "How does the app read business card details and create an iOS contact entry?",
-        "answer": "The app uses an on-device business card mode equipped with OCR. It captures the card, reads the printed text lines, separates them into name, company, phone, email, and address fields, and pushes that structured data straight into your iOS Contacts app."
+        "question": "How do I scan a business card directly into Apple Contacts?",
+        "answer": "Using Document Scanner & PDF Toolkit, capture the card using the business card feature. The app reads the card's printed information, maps it into a new iOS contact card, and lets you save it directly to your address book after a brief review."
       },
       {
-        "question": "Can you review and edit the parsed contact fields before saving them to your iPhone address book?",
-        "answer": "Yes. After scanning, the app displays the detected fields in a review screen. You can tap any line to correct spelling errors, adjust telephone area codes, or add notes before finalising the contact entry."
+        "question": "Which contact fields does the scanner recognise automatically?",
+        "answer": "The on-device OCR tool identifies the person's name, company name, telephone numbers, email address, and street address printed on the card."
       },
       {
-        "question": "Does scanning business cards require an internet connection or cloud account?",
-        "answer": "No. The scanning, edge detection, and OCR extraction run locally on your iPhone. Your business contacts and card images are not uploaded to external cloud servers, working fully offline."
+        "question": "Can I review and edit the contact details before saving them to iOS Contacts?",
+        "answer": "Yes. After the card is scanned, the app displays the extracted information in editable fields. You can correct typos, adjust names, or add notes before committing the record to your device's Contacts."
       },
       {
-        "question": "How do you use iOS Live Text in the Camera app to detect card details?",
-        "answer": "On iOS 15 or later with an iPhone XS/XR or newer, frame the card in the Camera app. Tap the detected phone number or email link highlighted by Live Text, and choose Add to Contacts from the menu. Unlike dedicated scanners, it processes one element at a time."
+        "question": "How can I use iOS Live Text to add a phone number or email from a card?",
+        "answer": "On an iPhone XS/XR or newer running iOS 15 or later, open the native Camera app and point it at the business card. When the Live Text indicator highlights the text, tap the phone number or email address, then tap Add to Contacts in the action menu."
       },
       {
-        "question": "Why is dedicated card scanning faster than entering details manually?",
-        "answer": "Manual typing requires toggling between your phone keypad and the paper card to input up to five separate fields. Dedicated card scanning parses all fields simultaneously in a single snapshot, reducing the process to a two-second check."
+        "question": "Are business card details processed on my iPhone or sent to a server?",
+        "answer": "All scanning and text recognition tasks run locally on your device. Your captured cards and newly created contacts are never uploaded to an external server."
       }
     ],
     "cta": {
-      "heading": "Scan Your Business Cards in Seconds",
-      "text": "Download Document Scanner & PDF Toolkit on your iPhone or iPad to capture business cards, extract details with local OCR, and update your contacts list securely."
+      "heading": "Turn Your Paper Cards into Contacts",
+      "text": "Download Document Scanner & PDF Toolkit to capture business cards, extract phone numbers and emails, and save new contacts to your iPhone in seconds."
     }
   },
   "qa": {
@@ -178,17 +173,21 @@
     "errors": [],
     "warnings": [],
     "metrics": {
-      "words": 1027,
+      "words": 927,
       "keyword_coverage": 1.0,
-      "max_jaccard": 0.0061,
-      "max_jaccard_with": "scan-receipt-on-iphone",
-      "max_cosine": 0.8712,
+      "max_jaccard": 0.0096,
+      "max_jaccard_with": "ocr-handwriting-iphone",
+      "max_cosine": 0.8655,
       "max_cosine_with": "scan-receipt-on-iphone",
       "shared_sentences": 0,
-      "writer_model": "gemini-3.8-flash",
-      "judge_model": "gemini-3.5-flash"
+      "compared_with": 7,
+      "writer_model": "gemini-3.7-flash",
+      "mode": "draft",
+      "judge_model": "gemini-3.5-flash-lite"
     },
-    "overlaps": []
+    "overlaps": [],
+    "fix_fields": [],
+    "page_level": false
   },
   "judge": {
     "specificity": 5,
@@ -198,5 +197,5 @@
     "problems": []
   },
   "attempts": 1,
-  "input_hash": "85950eb27a2b5514"
+  "input_hash": "c78b587833484581"
 }

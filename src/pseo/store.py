@@ -55,6 +55,10 @@ CREATE TABLE IF NOT EXISTS events (
     message TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_pages_status ON pages(status);
+CREATE TABLE IF NOT EXISTS embed_cache (
+    key  TEXT PRIMARY KEY,      -- sha1(model + text)
+    vec  BLOB
+);
 """
 
 
@@ -81,16 +85,18 @@ class Store:
     # ------------------------------------------------------------------ runs / events
     def start_run(self) -> int:
         # only called while holding the run lock, so any run still marked 'running' was killed
-        self.db.execute("UPDATE runs SET status='aborted' WHERE status='running'")
-        cur = self.db.execute("INSERT INTO runs(started_at, status) VALUES (?, 'running')", (time.time(),))
-        self.db.commit()
-        self.run_id = cur.lastrowid
-        return self.run_id
+        with self.lock:
+            self.db.execute("UPDATE runs SET status='aborted' WHERE status='running'")
+            cur = self.db.execute("INSERT INTO runs(started_at, status) VALUES (?, 'running')", (time.time(),))
+            self.db.commit()
+            self.run_id = cur.lastrowid
+            return self.run_id
 
     def finish_run(self, status: str, stats: dict) -> None:
-        self.db.execute("UPDATE runs SET finished_at=?, status=?, stats_json=? WHERE id=?",
-                        (time.time(), status, json.dumps(stats), self.run_id))
-        self.db.commit()
+        with self.lock:
+            self.db.execute("UPDATE runs SET finished_at=?, status=?, stats_json=? WHERE id=?",
+                            (time.time(), status, json.dumps(stats), self.run_id))
+            self.db.commit()
 
     def event(self, slug: str | None, stage: str, level: str, message: str) -> None:
         with self.lock:
@@ -102,13 +108,34 @@ class Store:
         self.db.commit()
 
     def recent_runs(self, n: int = 10) -> list[dict]:
-        rows = self.db.execute("SELECT * FROM runs ORDER BY id DESC LIMIT ?", (n,)).fetchall()
-        return [dict(r) for r in rows]
+        with self.lock:
+            rows = self.db.execute("SELECT * FROM runs ORDER BY id DESC LIMIT ?", (n,)).fetchall()
+            return [dict(r) for r in rows]
+
+    # ------------------------------------------------------------------ embedding cache
+    def cached_vectors(self, keys: list[str]) -> dict[str, np.ndarray]:
+        if not keys:
+            return {}
+        with self.lock:
+            out = {}
+            for i in range(0, len(keys), 500):
+                chunk = keys[i:i + 500]
+                q = ",".join("?" for _ in chunk)
+                for r in self.db.execute(f"SELECT key, vec FROM embed_cache WHERE key IN ({q})", chunk):
+                    out[r["key"]] = np.frombuffer(r["vec"], dtype=np.float32)
+            return out
+
+    def cache_vectors(self, items: dict[str, np.ndarray]) -> None:
+        with self.lock:
+            self.db.executemany("INSERT OR REPLACE INTO embed_cache VALUES (?, ?)",
+                                [(k, np.asarray(v, dtype=np.float32).tobytes()) for k, v in items.items()])
+            self.db.commit()
 
     # ------------------------------------------------------------------ pages
     def get(self, slug: str) -> dict | None:
-        r = self.db.execute("SELECT * FROM pages WHERE slug=?", (slug,)).fetchone()
-        return dict(r) if r else None
+        with self.lock:
+            r = self.db.execute("SELECT * FROM pages WHERE slug=?", (slug,)).fetchone()
+            return dict(r) if r else None
 
     def upsert(self, slug: str, **fields) -> None:
         with self.lock:
@@ -141,11 +168,12 @@ class Store:
         self.db.commit()
 
     def pages(self, status: str | None = None) -> list[dict]:
-        if status:
-            rows = self.db.execute("SELECT * FROM pages WHERE status=? ORDER BY slug", (status,)).fetchall()
-        else:
-            rows = self.db.execute("SELECT * FROM pages ORDER BY slug").fetchall()
-        return [dict(r) for r in rows]
+        with self.lock:
+            if status:
+                rows = self.db.execute("SELECT * FROM pages WHERE status=? ORDER BY slug", (status,)).fetchall()
+            else:
+                rows = self.db.execute("SELECT * FROM pages ORDER BY slug").fetchall()
+            return [dict(r) for r in rows]
 
     def corpus(self, exclude: str | None = None) -> list[dict]:
         """Every published page with decoded similarity features."""

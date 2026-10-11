@@ -9,6 +9,7 @@ import json
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
+from pydantic import create_model
 
 from .llm import Provider
 from .models import JudgeVerdict, KeywordRecord, PageBrief, PageContent, PlanBatch
@@ -37,6 +38,13 @@ class Agents:
                 self.platform_facts if platform_fact_ids is None
                 else [f for f in self.platform_facts if f["id"] in set(platform_fact_ids)], indent=1),
         )
+
+    def _thinking(self, role: str) -> str | None:
+        """Reasoning effort per role (config llm.thinking). 'low' is ~3x faster on Gemini 3.x
+        Flash; first drafts, patches and the editor use it, while the planner and full rewrites
+        (the cases where the model already failed once) keep the model's deeper default."""
+        v = (self.cfg["llm"].get("thinking") or {}).get(role)
+        return v or None
 
     def prompt_version(self) -> str:
         """Hash of all prompt templates: changing a prompt invalidates every page's input hash."""
@@ -76,7 +84,7 @@ class Agents:
         out: PlanBatch = self.p.generate(
             task="plan", model=self.cfg["llm"]["planner_model"], system=self._system(app),
             prompt=prompt, schema=PlanBatch, temperature=self.cfg["llm"]["temperature_planner"],
-            context={"records": batch, "neighbour_slugs": neighbour_slugs},
+            context={"records": batch, "neighbour_slugs": neighbour_slugs}, thinking=self._thinking("planner"),
         )
         briefs = {b.slug: b for b in out.briefs}
         valid_features = {f["id"] for f in app["features"]}
@@ -111,7 +119,27 @@ class Agents:
             system=self._system(app, brief.platform_fact_ids), prompt=prompt, schema=PageContent,
             temperature=self.cfg["llm"]["temperature_writer"],
             context={"record": rec, "brief": brief, "app": app},
+            thinking=self._thinking("writer_revise" if feedback else "writer_draft"),
         )
+
+    # ---------------------------------------------------------------- targeted patch
+    def patch(self, rec: KeywordRecord, brief: PageBrief, content: PageContent, fields: list[str],
+              feedback: list[str], siblings: list[dict]) -> PageContent:
+        """Rewrite only the fields the QA errors point at (e.g. meta_description, faqs) and merge
+        them back. Output is a few hundred tokens instead of a whole page, so a fix costs a
+        fraction of a full rewrite and cannot break sections that already passed."""
+        app = self.apps[rec.app_id]
+        schema = create_model("PagePatch", **{f: (PageContent.model_fields[f].annotation, ...) for f in fields})
+        prompt = self.env.get_template("patch.md").render(
+            record=rec, brief_json=brief.model_dump_json(indent=1), fields=fields, feedback=feedback,
+            siblings=siblings, page_json=content.model_dump_json(indent=1))
+        part = self.p.generate(
+            task="patch", model=self.cfg["llm"]["writer_model"], system=self._system(app, brief.platform_fact_ids),
+            prompt=prompt, schema=schema, temperature=self.cfg["llm"]["temperature_writer"],
+            context={"record": rec, "brief": brief, "app": app, "fields": fields},
+            thinking=self._thinking("patch"),
+        )
+        return content.model_copy(update={f: getattr(part, f) for f in fields})
 
     # ---------------------------------------------------------------- judge
     def judge(self, rec: KeywordRecord, brief: PageBrief, content: PageContent,
@@ -123,4 +151,5 @@ class Agents:
         return self.p.generate(
             task="judge", model=self.cfg["llm"]["judge_model"], system=self._system(app, brief.platform_fact_ids),
             prompt=prompt, schema=JudgeVerdict, temperature=0.0, context={"record": rec},
+            thinking=self._thinking("judge"),
         )
