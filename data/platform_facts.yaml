@@ -1,0 +1,36 @@
+# Third-party / platform facts the agent may cite when describing alternatives.
+# Kept separate from app facts so they can be reviewed and versioned independently.
+# Each fact has an id; the writer must stick to these when describing non-app methods,
+# and must say "check the official requirements" for anything regulatory.
+
+facts:
+  - id: ios_notes_scan
+    text: "The iOS Notes app can scan documents: open or create a note, tap the camera (or paperclip) button, choose Scan Documents, and the scan is saved inside the note, from where it can be shared as a PDF."
+  - id: ios_files_scan
+    text: "The iOS Files app can scan directly into a folder: open Files, tap the More (•••) button and choose Scan Documents; the result is saved as a PDF in that location."
+  - id: ios_live_text
+    text: "Live Text (iOS 15 and later on iPhone XS/XR and newer) lets you select, copy, translate or look up text in the Camera and Photos apps. It handles printed text well and clear handwriting with mixed results. Tapping a detected phone number or email offers actions such as Add to Contacts."
+  - id: ios_markup_sign
+    text: "Markup in Files, Mail and Photos can add a signature to a PDF: open the PDF, tap the Markup (pen) icon, tap +, then Add Signature."
+  - id: ios_files_create_pdf
+    text: "In the Files app you can select several images or PDFs, tap More (•••) and choose Create PDF to combine them into one file; page order follows the selection order and cannot be rearranged there."
+  - id: ios_no_compress
+    text: "iOS has no built-in control for compressing a PDF to a target size."
+  - id: ios_no_shadow
+    text: "The Notes and Files scanners apply automatic contrast but have no dedicated shadow-removal control."
+  - id: google_docs_pdf
+    text: "Google Docs can convert a PDF or image to editable text: upload it to Google Drive, then choose Open with > Google Docs. Formatting is often lost and it works best on clean, printed pages."
+  - id: word_open_pdf
+    text: "Microsoft Word for desktop can open a PDF and convert it into an editable document; complex layouts may not convert exactly. Desktop Word needs a paid Microsoft 365 or Office licence, so it is only free for people who already have one."
+  - id: online_converters
+    text: "Free online PDF tools exist, but they require uploading the document to a third-party server, which matters for IDs, contracts and financial records, and free tiers often limit file size or daily use."
+  - id: passport_sizes
+    text: "Common passport photo sizes: United States 2x2 inches (51x51 mm); United Kingdom, Schengen countries and India 35x45 mm. Requirements on background, head size and recency differ by country and change, so always confirm with the issuing authority's official site."
+  - id: passport_digital
+    text: "Many online passport and visa applications ask for a digital photo upload with a pixel-size and file-size range rather than a printed photo."
+  - id: thermal_receipts
+    text: "Thermal-paper receipts fade over time, often within months to a few years, which is why scanning them soon after purchase is recommended for expense and warranty records."
+  - id: handwriting_limits
+    text: "OCR accuracy on handwriting depends heavily on legibility, contrast, lighting and whether letters are joined; cursive is the hardest case for most recognisers."
+  - id: email_limits
+    text: "Many email providers cap attachments at about 20-25 MB, a common reason people need to compress PDFs."

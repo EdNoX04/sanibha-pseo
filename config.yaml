@@ -1,0 +1,66 @@
+# Runtime configuration. Every value can be overridden with an env var PSEO_<SECTION>_<KEY>,
+# e.g. PSEO_LLM_WRITER_MODEL=gemini-2.5-pro.
+
+paths:
+  keywords: data/keywords.csv
+  apps_dir: data/apps
+  platform_facts: data/platform_facts.yaml
+  prompts_dir: prompts
+  templates_dir: templates
+  state_db: state/pseo.sqlite
+  output_dir: output
+  lock_file: state/pseo.lock
+
+site:
+  base_url: https://sanibha.example/guides   # placeholder; used for canonical URLs and internal links
+
+llm:
+  provider: gemini            # gemini | mock
+  # Comma-separated = fallback chain: the next model is used when one is overloaded or out of
+  # daily quota. The judge deliberately defaults to a different model than the writer.
+  planner_model: gemini-3.8-flash,gemini-3.7-flash,gemini-3.6-flash,gemini-3.5-flash,gemini-2.5-flash
+  writer_model: gemini-3.8-flash,gemini-3.7-flash,gemini-3.6-flash,gemini-3.5-flash,gemini-2.5-flash
+  judge_model: gemini-3.5-flash,gemini-3.5-flash-lite,gemini-3.1-flash-lite,gemini-2.5-flash-lite
+  embed_model: gemini-embedding-001
+  temperature_writer: 0.8
+  temperature_planner: 0.4
+  requests_per_minute: 8      # free tier is ~10 RPM for Flash; stay under it
+  max_retries: 6
+  request_timeout_s: 180      # per request; a stuck call is retried instead of hanging the run
+
+pipeline:
+  plan_batch_size: 12         # max keywords planned together (one LLM call sees all siblings)
+  related_neighbours: 6       # how many nearest pages the planner sees for internal linking
+  max_revisions: 2            # writer -> QA -> reviser loop iterations before quarantine
+  max_new_pages_per_run: 200  # budget guard for scheduled runs
+  workers: 1                  # page-level concurrency (raise on paid tier)
+
+dedupe:
+  keyword_merge_cosine: 0.96  # keywords this similar are the SAME page (secondary keyword, no new URL)
+  keyword_sibling_cosine: 0.80 # keywords this similar must be explicitly differentiated in planning
+  page_max_jaccard: 0.12      # max 5-word-shingle Jaccard between any two published pages
+  page_max_cosine: 0.93       # max embedding cosine between any two published pages
+  max_shared_sentences: 1     # sentences (>=8 words) allowed to appear verbatim on another page
+  faq_max_overlap: 0.5        # max content-word Jaccard between a FAQ question and any other page's FAQ
+  faq_max_cosine: 0.93        # max embedding cosine between FAQ questions on different pages
+                              # (calibrated: across 1,705 cross-page FAQ pairs p50=0.76, p99=0.88;
+                              #  the pairs above 0.94 were true duplicates)
+  minhash_perms: 128
+  lsh_bands: 64             # 64 bands x 2 rows: ~93% recall at Jaccard 0.2
+  exact_compare_below: 2000  # below this corpus size, compare every pair exactly (cheap); above, use LSH + embedding neighbours
+  candidate_neighbours: 25   # embedding nearest neighbours always checked exactly
+
+quality:
+  min_words: 650
+  max_words: 1600
+  title_max_chars: 62
+  meta_min_chars: 110
+  meta_max_chars: 160
+  min_keyword_coverage: 0.75  # share of keyword content-words that must appear in title or H1
+  judge_enabled: true
+  judge_min_score: 4          # 1-5; specificity and usefulness, scored by a separate LLM call
+  max_quarantine_rate: 0.25   # run exits non-zero (alerts) if more than this share is quarantined
+
+ops:
+  alert_webhook_env: PSEO_ALERT_WEBHOOK      # Slack/Discord-compatible incoming webhook
+  heartbeat_url_env: PSEO_HEARTBEAT_URL      # healthchecks.io-style dead-man's switch

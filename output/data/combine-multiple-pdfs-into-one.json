@@ -1,0 +1,196 @@
+{
+  "record": {
+    "keyword": "combine multiple PDFs into one",
+    "app_id": "doc-scanner",
+    "slug": "combine-multiple-pdfs-into-one",
+    "tokens": [
+      "combine",
+      "multiple",
+      "pdfs"
+    ],
+    "platform": "any",
+    "wants_free": false,
+    "intent_guess": "task_howto",
+    "action": "combine",
+    "source_format": "pdf",
+    "target_format": null,
+    "candidate_features": [
+      "batch_scan",
+      "merge_pdf"
+    ],
+    "cluster_id": 0,
+    "siblings": [
+      "compress-pdf-file-size-free",
+      "convert-pdf-to-word-free",
+      "convert-scanned-image-to-text"
+    ],
+    "merged_keywords": []
+  },
+  "brief": {
+    "slug": "combine-multiple-pdfs-into-one",
+    "intent_type": "task_howto",
+    "searcher_goal": "Merge separate PDF documents and images into a single, organized multi-page PDF on iPhone or iPad.",
+    "scenario": "A user has downloaded multiple PDF forms, statements, and image attachments that must be arranged in a specific sequence and submitted as one unified PDF.",
+    "unique_angle": "Focuses on manual page reordering, rotation, and combining mixed image/PDF files before final save, fixing the rigid order limitation of iOS Files.",
+    "must_answer": [
+      "How do you combine multiple PDFs and images into a single file on an iPhone?",
+      "Can you drag to reorder, rotate, or delete individual pages before combining?",
+      "Can you merge documents natively in the iOS Files app without extra software?",
+      "What are the limitations of using the iOS Files 'Create PDF' action?",
+      "Does merging PDFs upload your files to an external cloud server?"
+    ],
+    "exclusions": [
+      {
+        "topic": "Shrinking merged PDF file sizes for email attachment limits",
+        "owner_slug": "compress-pdf-file-size-free"
+      },
+      {
+        "topic": "Converting PDF files into editable Microsoft Word documents",
+        "owner_slug": "convert-pdf-to-word-free"
+      },
+      {
+        "topic": "Extracting text from images using on-device optical character recognition",
+        "owner_slug": "convert-scanned-image-to-text"
+      }
+    ],
+    "feature_ids": [
+      "merge_pdf",
+      "share_export",
+      "privacy_ondevice"
+    ],
+    "platform_fact_ids": [
+      "ios_files_create_pdf",
+      "online_converters"
+    ],
+    "related_slugs": [
+      "compress-pdf-file-size-free",
+      "convert-pdf-to-word-free",
+      "convert-scanned-image-to-text"
+    ],
+    "ambiguity_note": ""
+  },
+  "content": {
+    "title": "Combine Multiple PDFs into One File on iPhone & iPad",
+    "meta_description": "Learn how to combine multiple PDFs and images into a single, organized document on your iPhone or iPad. Reorder, rotate, and delete pages before saving.",
+    "h1": "How to Combine Multiple PDFs into One File on iPhone and iPad",
+    "quick_answer": "You can combine multiple PDFs and images into one file on your iPhone or iPad using Document Scanner & PDF Toolkit. Select your files, then drag pages to reorder them, or rotate and delete individual pages before saving the final multi-page PDF. This gives you full control over your combined document's organization.",
+    "intro": [
+      "You might have several PDF forms, bank statements, or image attachments that need to be submitted as a single, organized PDF document. Whether it's for an application, a report, or simply for better archiving, merging files is a common task.",
+      "This page explains how to combine different PDF files and images into one unified document on your iPhone or iPad. You will learn how to arrange pages in a specific order, rotate them, or remove unwanted pages before saving your combined file.",
+      "If you need to make your merged PDF smaller for email limits, see our guide on compressing PDF file size. For converting PDFs to editable Word documents or extracting text from images, we have dedicated pages for those tasks."
+    ],
+    "steps_heading": "Combine PDFs and Images with Document Scanner & PDF Toolkit",
+    "steps": [
+      {
+        "title": "Launch the App and Start Merging",
+        "detail": "Launch the Document Scanner & PDF Toolkit on your iPhone or iPad. Tap the option to merge PDFs. The app will prompt you to select the files you want to combine."
+      },
+      {
+        "title": "Select Your Documents and Images",
+        "detail": "Choose the PDF documents and individual images you wish to merge from your device's files or photo library. You can select multiple items at once. The app will import them into a single view."
+      },
+      {
+        "title": "Arrange Pages in Order",
+        "detail": "Once your files are imported, you will see all the pages in a list. Drag and drop individual pages to reorder them exactly as you need them. This ensures your final document flows correctly."
+      },
+      {
+        "title": "Rotate or Delete Pages",
+        "detail": "If any page is scanned upside down or sideways, tap on it to access editing options and rotate it. You can also delete any unwanted pages from the merged document before saving."
+      },
+      {
+        "title": "Save or Share Your Combined PDF",
+        "detail": "After arranging and editing your pages, tap to confirm. The app will then create your single, multi-page PDF. You can then save it to your device, share it via AirDrop, Mail, or directly to cloud services like iCloud Drive, Google Drive, or Dropbox."
+      }
+    ],
+    "alternatives_heading": "Other Ways to Combine PDFs on iOS",
+    "alternatives": [
+      {
+        "method": "Using the iOS Files App",
+        "how": "In the Files app, you can select several images or PDFs. Tap the More (\b\b\b) button and choose Create PDF to combine them into one file.",
+        "best_for": "Quickly combining a few images or PDFs where the default order is acceptable.",
+        "limitation": "The page order follows the selection order and cannot be rearranged after creation. You cannot rotate or delete individual pages before saving."
+      },
+      {
+        "method": "Online PDF Tools",
+        "how": "Many websites offer free tools to merge PDFs. You upload your files, and the service combines them for you to download.",
+        "best_for": "Users who prefer not to install an app and are comfortable with web-based solutions.",
+        "limitation": "These tools require uploading your documents to a third-party server. This may be a concern for private or sensitive documents like IDs, contracts, or financial records. Many online services offer limited file sizes or daily usage in their free versions."
+      }
+    ],
+    "features_heading": "Key Features for Merging Documents",
+    "feature_points": [
+      {
+        "feature_id": "merge_pdf",
+        "benefit": "Combine separate PDFs and images into one document, then easily reorder pages by dragging them into place, or rotate and delete pages as needed."
+      },
+      {
+        "feature_id": "share_export",
+        "benefit": "Once your combined PDF is ready, save it as a PDF or JPG, or share it directly through AirDrop, Mail, Files, iCloud Drive, Google Drive, or Dropbox."
+      },
+      {
+        "feature_id": "privacy_ondevice",
+        "benefit": "All merging and editing processes run directly on your iPhone or iPad. Your documents are not uploaded to any external server, keeping your sensitive information private."
+      }
+    ],
+    "tips_heading": "Tips for Combining Documents",
+    "tips": [
+      "Before you start, gather all the PDFs and images you intend to combine into a single folder on your device. This makes selection faster.",
+      "Always review the page order after merging, especially if you combined many files, to ensure everything is in the correct sequence.",
+      "If you are adding scanned pages to an existing PDF, ensure the new scans have good lighting and contrast for a consistent look.",
+      "If you frequently combine documents for a specific purpose, consider creating a template or naming convention for the combined files."
+    ],
+    "faqs": [
+      {
+        "question": "How do you combine multiple PDFs and images into a single file on an iPhone?",
+        "answer": "You can combine multiple PDFs and images into a single file on your iPhone using the Document Scanner & PDF Toolkit app. Select all the files you want to merge, then use the app's interface to reorder, rotate, or delete individual pages before saving the final combined PDF."
+      },
+      {
+        "question": "Can you drag to reorder, rotate, or delete individual pages before combining PDFs?",
+        "answer": "Yes, with Document Scanner & PDF Toolkit, you can drag to reorder pages in your merged document. You can also rotate individual pages that are not oriented correctly, or delete any pages you do not need from the combined file before it is saved."
+      },
+      {
+        "question": "Can you merge documents natively in the iOS Files app without extra software?",
+        "answer": "Yes, the iOS Files app can combine documents. You can select several images or PDFs, tap the More (\b\b\b) button, and choose Create PDF to combine them into one file. This feature is built into iOS."
+      },
+      {
+        "question": "What are the limitations of using the iOS Files 'Create PDF' action?",
+        "answer": "The main limitation of the iOS Files 'Create PDF' action is that the page order follows your selection order and cannot be rearranged afterwards. You also cannot rotate or delete individual pages within that process once they are combined."
+      },
+      {
+        "question": "Does merging PDFs with the app upload your files to an external cloud server?",
+        "answer": "No, when you merge PDFs using Document Scanner & PDF Toolkit, all processing happens on your iPhone or iPad. Your files are stored locally and are not uploaded to an external cloud server unless you choose to export them to a cloud service yourself."
+      }
+    ],
+    "cta": {
+      "heading": "Ready to Combine Your Documents?",
+      "text": "Download Document Scanner & PDF Toolkit to merge multiple PDFs and images into one organized file on your iPhone or iPad. Arrange pages, make edits, and save your perfect document."
+    }
+  },
+  "qa": {
+    "passed": true,
+    "errors": [],
+    "warnings": [],
+    "metrics": {
+      "words": 1027,
+      "keyword_coverage": 1.0,
+      "max_jaccard": 0.0139,
+      "max_jaccard_with": "best-free-pdf-scanner-app",
+      "max_cosine": 0.8808,
+      "max_cosine_with": "best-free-pdf-scanner-app",
+      "shared_sentences": 0
+    },
+    "overlaps": []
+  },
+  "judge": {
+    "specificity": 5,
+    "usefulness": 5,
+    "accuracy_risk": 4,
+    "swap_test": "pass",
+    "problems": [
+      "The phrase \"Tap the option to merge PDFs\" in `steps[0].detail` invents a specific UI element or action not explicitly supported by the APP FACTS. The facts confirm the feature exists but not its exact UI.",
+      "The ellipsis in `alternatives[0].how` and `faqs[2].answer` is incorrectly rendered as `\\b\\b\\b` instead of `...` or `\\u2022\\u2022\\u2022`."
+    ]
+  },
+  "attempts": 2,
+  "input_hash": "5532cd87afe5c979"
+}

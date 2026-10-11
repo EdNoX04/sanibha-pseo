@@ -1,0 +1,57 @@
+---
+title: "{{ c.title | replace('"', '\\"') }}"
+description: "{{ c.meta_description | replace('"', '\\"') }}"
+slug: {{ slug }}
+keyword: "{{ rec.keyword }}"
+intent: {{ brief.intent_type }}
+canonical: {{ base_url }}/{{ slug }}
+generated_at: {{ generated_at }}
+---
+
+# {{ c.h1 }}
+
+> **Quick answer:** {{ c.quick_answer }}
+
+{% for p in c.intro %}{{ p }}
+
+{% endfor %}
+## {{ c.steps_heading }}
+
+{% for s in c.steps %}{{ loop.index }}. **{{ s.title.rstrip('.:') }}.** {{ s.detail }}
+{% endfor %}
+
+## {{ c.alternatives_heading }}
+
+| Method | How | Best for | Limitation |
+|---|---|---|---|
+{% for a in c.alternatives %}| **{{ a.method | cell }}** | {{ a.how | cell }} | {{ a.best_for | cell }} | {{ a.limitation | cell }} |
+{% endfor %}
+
+## {{ c.features_heading }}
+
+{% for f in c.feature_points %}- **{{ features[f.feature_id].name }}**{% if features[f.feature_id].tier == 'pro' %} (Pro){% endif %}: {{ f.benefit }}
+{% endfor %}
+
+## {{ c.tips_heading }}
+
+{% for t in c.tips %}- {{ t }}
+{% endfor %}
+
+## Frequently asked questions
+
+{% for f in c.faqs %}### {{ f.question }}
+
+{{ f.answer }}
+
+{% endfor %}
+## {{ c.cta.heading }}
+
+{{ c.cta.text }}
+
+[Get {{ app.name }} on the App Store]({{ app.app_store_url }})
+{% if related %}
+
+## Related guides
+
+{% for r in related %}- [{{ r.title }}]({{ r.slug }}.md)
+{% endfor %}{% endif %}

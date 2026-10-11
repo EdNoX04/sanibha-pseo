@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ c.title }}</title>
+<meta name="description" content="{{ c.meta_description }}">
+<link rel="canonical" href="{{ base_url }}/{{ slug }}">
+<meta name="robots" content="index,follow">
+<meta property="og:title" content="{{ c.title }}">
+<meta property="og:description" content="{{ c.meta_description }}">
+<meta property="og:type" content="article">
+<meta name="pseo:keyword" content="{{ rec.keyword }}">
+<meta name="pseo:intent" content="{{ brief.intent_type }}">
+<meta name="pseo:generated" content="{{ generated_at }}">
+<script type="application/ld+json">{{ jsonld | safe }}</script>
+<style>
+/* Minimal readable defaults only: visual design is out of scope for this assignment. */
+body{font-family:system-ui,-apple-system,sans-serif;max-width:46rem;margin:2rem auto;padding:0 1rem;line-height:1.6;color:#1a1a1a}
+.quick{border-left:4px solid #0a7;padding:.5rem 1rem;background:#f3faf7}
+table{border-collapse:collapse;width:100%;font-size:.95rem}td,th{border:1px solid #ddd;padding:.5rem;vertical-align:top;text-align:left}
+.cta{background:#f5f5f5;padding:1rem 1.25rem;border-radius:8px}
+nav.crumbs{font-size:.85rem;color:#555}
+</style>
+</head>
+<body>
+<nav class="crumbs"><a href="index.html">Guides</a> › {{ c.h1 }}</nav>
+<article>
+<h1>{{ c.h1 }}</h1>
+
+<section class="quick" aria-label="Quick answer">
+<p><strong>Quick answer:</strong> {{ c.quick_answer }}</p>
+</section>
+
+{% for p in c.intro %}<p>{{ p }}</p>
+{% endfor %}
+
+<section>
+<h2>{{ c.steps_heading }}</h2>
+<ol>
+{% for s in c.steps %}<li><strong>{{ s.title.rstrip('.:') }}.</strong> {{ s.detail }}</li>
+{% endfor %}</ol>
+</section>
+
+<section>
+<h2>{{ c.alternatives_heading }}</h2>
+<table>
+<thead><tr><th>Method</th><th>How</th><th>Best for</th><th>Limitation</th></tr></thead>
+<tbody>
+{% for a in c.alternatives %}<tr><td><strong>{{ a.method }}</strong></td><td>{{ a.how }}</td><td>{{ a.best_for }}</td><td>{{ a.limitation }}</td></tr>
+{% endfor %}</tbody>
+</table>
+</section>
+
+<section>
+<h2>{{ c.features_heading }}</h2>
+<ul>
+{% for f in c.feature_points %}<li><strong>{{ features[f.feature_id].name }}</strong>{% if features[f.feature_id].tier == 'pro' %} (Pro){% endif %}: {{ f.benefit }}</li>
+{% endfor %}</ul>
+</section>
+
+<section>
+<h2>{{ c.tips_heading }}</h2>
+<ul>
+{% for t in c.tips %}<li>{{ t }}</li>
+{% endfor %}</ul>
+</section>
+
+<section>
+<h2>Frequently asked questions</h2>
+{% for f in c.faqs %}<h3>{{ f.question }}</h3>
+<p>{{ f.answer }}</p>
+{% endfor %}</section>
+
+<section class="cta">
+<h2>{{ c.cta.heading }}</h2>
+<p>{{ c.cta.text }}</p>
+<p><a href="{{ app.app_store_url }}">Get {{ app.name }} on the App Store</a></p>
+</section>
+
+{% if related %}<section>
+<h2>Related guides</h2>
+<ul>
+{% for r in related %}<li><a href="{{ r.slug }}.html">{{ r.title }}</a></li>
+{% endfor %}</ul>
+</section>{% endif %}
+</article>
+</body>
+</html>

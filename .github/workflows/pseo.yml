@@ -1,0 +1,83 @@
+name: pseo
+
+on:
+  schedule:
+    - cron: "17 21 * * *"        # daily 02:47 IST; off the hour to avoid scheduler congestion
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Regenerate every page"
+        type: boolean
+        default: false
+  push:
+    paths: ["src/**", "tests/**", "prompts/**", "templates/**", "config.yaml"]
+  pull_request:
+
+# Never let two generation runs overlap (the app also takes a file lock).
+concurrency:
+  group: pseo-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - run: pip install -r requirements.txt
+      - run: python -m pytest -q          # offline: uses the mock LLM, no secrets needed
+
+  generate:
+    # Only scheduled/manual runs spend API quota; pushes just run tests.
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      PSEO_ALERT_WEBHOOK: ${{ secrets.PSEO_ALERT_WEBHOOK }}
+      PSEO_HEARTBEAT_URL: ${{ secrets.PSEO_HEARTBEAT_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - run: pip install -r requirements.txt
+
+      - name: Generate pages (incremental)
+        id: run
+        run: |
+          set +e
+          PYTHONPATH=src python -m pseo run ${{ inputs.force && '--force' || '' }}
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          cat output/report.md >> "$GITHUB_STEP_SUMMARY"
+          exit 0
+
+      # State (SQLite) and output are committed back: every content change is a reviewable
+      # git diff, and a bad batch can be rolled back with `git revert`.
+      - name: Commit state and pages
+        run: |
+          git config user.name "pseo-bot"
+          git config user.email "pseo-bot@users.noreply.github.com"
+          git add state/pseo.sqlite output/
+          git diff --cached --quiet || git commit -m "pseo: run ${{ github.run_number }} (exit ${{ steps.run.outputs.exit_code }})"
+          git push
+
+      - name: Fail the job if the run degraded or crashed
+        if: steps.run.outputs.exit_code != '0'
+        run: |
+          echo "pipeline exit code ${{ steps.run.outputs.exit_code }} (1=crashed, 2=degraded, 3=already running)"
+          exit 1
+
+      # Catches failures outside the Python process (install errors, checkout, push conflicts).
+      - name: Alert on workflow failure
+        if: failure() && env.PSEO_ALERT_WEBHOOK != ''
+        run: |
+          curl -sS -X POST -H 'Content-Type: application/json' \
+            -d "{\"text\":\"pSEO workflow failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" \
+            "$PSEO_ALERT_WEBHOOK"

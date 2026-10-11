@@ -1,0 +1,94 @@
+# Product fact sheet: the ONLY source of truth the agent may use for claims about the app.
+#
+# STATUS: ASSUMED. These features and tiers were written for this assignment from the brief
+# ("a scan-to-PDF and document-utility tool"), not taken from Sanibha's real feature sheet.
+# Before publishing, replace this file with the real one. Nothing else needs to change: the
+# pipeline re-generates every page whose facts changed (facts are part of each page's input hash).
+
+app_id: doc-scanner
+name: Document Scanner & PDF Toolkit
+platform: iOS (iPhone and iPad)
+app_store_url: https://apps.apple.com/app/id0000000000   # placeholder
+facts_status: assumed
+pricing_summary: >
+  Free to download. Scanning, editing, merging, signing and compressing are free.
+  Exporting to editable Word (.docx) is a Pro feature (in-app purchase).
+
+features:
+  - id: auto_edge
+    name: Automatic edge detection
+    tier: free
+    detail: Detects page borders in the camera view, crops and straightens (perspective-corrects) the page automatically.
+    triggers: [scan, receipt, document, passport, business card, scanner]
+
+  - id: batch_scan
+    name: Multi-page batch scanning
+    tier: free
+    detail: Capture many pages in one session; they are saved as a single multi-page PDF that can be reordered.
+    triggers: [scan, document, receipt, multiple, scanner]
+
+  - id: enhance_filters
+    name: Enhancement filters and shadow removal
+    tier: free
+    detail: One-tap filters (Auto, Black & White, Grayscale, Colour Boost) plus a Shadow Removal filter that evens out lighting and removes hand or phone shadows from the page.
+    triggers: [shadow, remove, enhance, scanned, receipt, handwriting, quality]
+
+  - id: ocr
+    name: On-device text recognition (OCR)
+    tier: free
+    detail: Recognises printed text on scans and photos and lets you copy it or export it as .txt. Runs on the device, so documents are not uploaded. Handwriting is supported but accuracy depends on how neat and high-contrast the writing is.
+    triggers: [ocr, text, handwriting, image to text, convert, scanned image]
+
+  - id: word_export
+    name: Export to Word (.docx)
+    tier: pro
+    detail: Converts a PDF or scan into an editable Word document, keeping paragraphs and basic formatting. Uses the OCR layer for scanned pages.
+    triggers: [word, docx, convert pdf, editable]
+
+  - id: merge_pdf
+    name: Merge PDFs
+    tier: free
+    detail: Combine several PDFs and images into one PDF, choose the order by dragging, and delete or rotate individual pages before saving.
+    triggers: [combine, merge, multiple pdfs, into one, join]
+
+  - id: compress_pdf
+    name: PDF compression
+    tier: free
+    detail: Reduce PDF file size with three presets (High quality, Balanced, Smallest) and a preview of the resulting size before saving.
+    triggers: [compress, file size, reduce, smaller, email limit]
+
+  - id: sign_pdf
+    name: Sign and fill PDFs
+    tier: free
+    detail: Draw a signature with your finger or Apple Pencil, save it for reuse, place and resize it on any page, and add text, dates and checkmarks to forms.
+    triggers: [sign, signature, fill, form]
+
+  - id: id_photo
+    name: ID photo mode
+    tier: free
+    detail: Crops a photo to common passport and visa sizes (for example 2x2 in and 35x45 mm) with a face-position guide, and exports a print sheet or a single digital image.
+    triggers: [passport, photo, visa, id, application]
+
+  - id: business_card
+    name: Business card to Contacts
+    tier: free
+    detail: Scans a business card, reads the name, company, phone, email and address with OCR, and creates an iOS contact you can review before saving.
+    triggers: [business card, contacts, vcard, contact]
+
+  - id: receipt_mode
+    name: Receipt mode
+    tier: free
+    detail: Long-receipt capture with automatic cropping, high-contrast filter for faded thermal paper, and folders with date-based file names for expense tracking.
+    triggers: [receipt, expense, invoice, bill]
+
+  - id: share_export
+    name: Export and share
+    tier: free
+    detail: Save as PDF or JPG, share via AirDrop, Mail or Files, or save directly to iCloud Drive, Google Drive and Dropbox.
+    triggers: [export, share, save, email]
+
+  - id: privacy_ondevice
+    name: On-device processing
+    tier: free
+    detail: Scanning, filters, OCR and compression run on the iPhone; files are stored locally unless you choose a cloud destination.
+    triggers: [privacy, secure, passport, id, offline]

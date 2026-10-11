@@ -1,0 +1,329 @@
+[
+  {
+    "slug": "best-free-pdf-scanner-app",
+    "keyword": "best free PDF scanner app",
+    "title": "Best Free PDF Scanner App for iPhone & iPad",
+    "intent": "comparison",
+    "url": "https://sanibha.example/guides/best-free-pdf-scanner-app",
+    "words": 1118,
+    "max_jaccard": 0.0176,
+    "max_cosine": 0.9114,
+    "closest_page": "scan-document-without-an-app",
+    "judge": {
+      "specificity": 5,
+      "usefulness": 5,
+      "accuracy_risk": 5,
+      "swap_test": "pass",
+      "problems": [
+        "The 'how' description for 'iOS Files App' in the 'Other Ways to Scan Documents on iOS' section contains `\\b\\b\\b` which is an incorrect character sequence. It should be `•••` or `...` as per the platform facts."
+      ]
+    },
+    "attempts": 1,
+    "related": [
+      "scan-document-without-an-app",
+      "sign-pdf-on-iphone-free",
+      "compress-pdf-file-size-free",
+      "convert-pdf-to-word-free"
+    ],
+    "content_changed_at": "2026-10-11T06:54:26Z",
+    "changed_this_run": false
+  },
+  {
+    "slug": "combine-multiple-pdfs-into-one",
+    "keyword": "combine multiple PDFs into one",
+    "title": "Combine Multiple PDFs into One File on iPhone & iPad",
+    "intent": "task_howto",
+    "url": "https://sanibha.example/guides/combine-multiple-pdfs-into-one",
+    "words": 1027,
+    "max_jaccard": 0.0151,
+    "max_cosine": 0.8808,
+    "closest_page": "best-free-pdf-scanner-app",
+    "judge": {
+      "specificity": 5,
+      "usefulness": 5,
+      "accuracy_risk": 4,
+      "swap_test": "pass",
+      "problems": [
+        "The phrase \"Tap the option to merge PDFs\" in `steps[0].detail` invents a specific UI element or action not explicitly supported by the APP FACTS. The facts confirm the feature exists but not its exact UI.",
+        "The ellipsis in `alternatives[0].how` and `faqs[2].answer` is incorrectly rendered as `\\b\\b\\b` instead of `...` or `\\u2022\\u2022\\u2022`."
+      ]
+    },
+    "attempts": 2,
+    "related": [
+      "compress-pdf-file-size-free",
+      "convert-pdf-to-word-free",
+      "convert-scanned-image-to-text"
+    ],
+    "content_changed_at": "2026-10-11T06:55:25Z",
+    "changed_this_run": false
+  },
+  {
+    "slug": "compress-pdf-file-size-free",
+    "keyword": "compress PDF file size free",
+    "title": "Compress PDF File Size Free on iPhone and iPad",
+    "intent": "task_howto",
+    "url": "https://sanibha.example/guides/compress-pdf-file-size-free",
+    "words": 1102,
+    "max_jaccard": 0.0176,
+    "max_cosine": 0.8727,
+    "closest_page": "combine-multiple-pdfs-into-one",
+    "judge": {
+      "specificity": 5,
+      "usefulness": 5,
+      "accuracy_risk": 5,
+      "swap_test": "pass",
+      "problems": []
+    },
+    "attempts": 1,
+    "related": [
+      "combine-multiple-pdfs-into-one",
+      "convert-pdf-to-word-free",
+      "best-free-pdf-scanner-app"
+    ],
+    "content_changed_at": "2026-10-11T06:58:16Z",
+    "changed_this_run": false
+  },
+  {
+    "slug": "convert-pdf-to-word-free",
+    "keyword": "convert PDF to Word free",
+    "title": "Convert PDF to Word Free: Safe Methods and Options",
+    "intent": "conversion",
+    "url": "https://sanibha.example/guides/convert-pdf-to-word-free",
+    "words": 1078,
+    "max_jaccard": 0.0135,
+    "max_cosine": 0.8987,
+    "closest_page": "best-free-pdf-scanner-app",
+    "judge": {
+      "specificity": 5,
+      "usefulness": 5,
+      "accuracy_risk": 5,
+      "swap_test": "pass",
+      "problems": []
+    },
+    "attempts": 1,
+    "related": [
+      "convert-scanned-image-to-text",
+      "best-free-pdf-scanner-app",
+      "compress-pdf-file-size-free",
+      "scan-document-without-an-app"
+    ],
+    "content_changed_at": "2026-10-11T07:17:18Z",
+    "changed_this_run": false
+  },
+  {
+    "slug": "convert-scanned-image-to-text",
+    "keyword": "convert scanned image to text",
+    "title": "Convert Scanned Image to Text on iPhone",
+    "intent": "conversion",
+    "url": "https://sanibha.example/guides/convert-scanned-image-to-text",
+    "words": 1080,
+    "max_jaccard": 0.0135,
+    "max_cosine": 0.9292,
+    "closest_page": "ocr-handwriting-iphone",
+    "judge": {
+      "specificity": 5,
+      "usefulness": 5,
+      "accuracy_risk": 5,
+      "swap_test": "pass",
+      "problems": []
+    },
+    "attempts": 1,
+    "related": [
+      "ocr-handwriting-iphone",
+      "convert-pdf-to-word-free",
+      "remove-shadow-from-scanned-document",
+      "scan-document-without-an-app"
+    ],
+    "content_changed_at": "2026-10-11T07:24:21Z",
+    "changed_this_run": false
+  },
+  {
+    "slug": "ocr-handwriting-iphone",
+    "keyword": "OCR handwriting iPhone",
+    "title": "OCR Handwriting on iPhone: Convert Notes to Text",
+    "intent": "task_howto",
+    "url": "https://sanibha.example/guides/ocr-handwriting-iphone",
+    "words": 1282,
+    "max_jaccard": 0.0097,
+    "max_cosine": 0.9292,
+    "closest_page": "convert-scanned-image-to-text",
+    "judge": {
+      "specificity": 5,
+      "usefulness": 5,
+      "accuracy_risk": 5,
+      "swap_test": "pass",
+      "problems": []
+    },
+    "attempts": 2,
+    "related": [
+      "convert-scanned-image-to-text",
+      "scan-receipt-on-iphone",
+      "sign-pdf-on-iphone-free"
+    ],
+    "content_changed_at": "2026-10-11T06:53:46Z",
+    "changed_this_run": false
+  },
+  {
+    "slug": "remove-shadow-from-scanned-document",
+    "keyword": "remove shadow from scanned document",
+    "title": "Remove Shadows from Scanned Documents on iPhone",
+    "intent": "problem_fix",
+    "url": "https://sanibha.example/guides/remove-shadow-from-scanned-document",
+    "words": 1037,
+    "max_jaccard": 0.0149,
+    "max_cosine": 0.8687,
+    "closest_page": "best-free-pdf-scanner-app",
+    "judge": {
+      "specificity": 5,
+      "usefulness": 5,
+      "accuracy_risk": 5,
+      "swap_test": "pass",
+      "problems": []
+    },
+    "attempts": 2,
+    "related": [
+      "convert-scanned-image-to-text",
+      "scan-document-without-an-app",
+      "compress-pdf-file-size-free",
+      "scan-passport-photo-for-application"
+    ],
+    "content_changed_at": "2026-10-11T06:57:41Z",
+    "changed_this_run": false
+  },
+  {
+    "slug": "scan-business-card-to-contacts",
+    "keyword": "scan business card to contacts",
+    "title": "Scan Business Card to Contacts on iPhone",
+    "intent": "task_howto",
+    "url": "https://sanibha.example/guides/scan-business-card-to-contacts",
+    "words": 1027,
+    "max_jaccard": 0.0061,
+    "max_cosine": 0.8712,
+    "closest_page": "scan-receipt-on-iphone",
+    "judge": {
+      "specificity": 5,
+      "usefulness": 5,
+      "accuracy_risk": 5,
+      "swap_test": "pass",
+      "problems": []
+    },
+    "attempts": 1,
+    "related": [
+      "scan-receipt-on-iphone",
+      "convert-scanned-image-to-text",
+      "scan-document-without-an-app"
+    ],
+    "content_changed_at": "2026-10-11T07:07:53Z",
+    "changed_this_run": false
+  },
+  {
+    "slug": "scan-document-without-an-app",
+    "keyword": "scan document without an app",
+    "title": "How to Scan Documents on iPhone Without an App",
+    "intent": "no_app_alternative",
+    "url": "https://sanibha.example/guides/scan-document-without-an-app",
+    "words": 960,
+    "max_jaccard": 0.0115,
+    "max_cosine": 0.9114,
+    "closest_page": "best-free-pdf-scanner-app",
+    "judge": {
+      "specificity": 5,
+      "usefulness": 5,
+      "accuracy_risk": 4,
+      "swap_test": "pass",
+      "problems": [
+        "The phrase \"The shutter automatically captures the page when borders are clear\" (in the quick_answer and steps[1].detail sections) describes a specific behavior of the built-in iOS scanner that is not explicitly detailed in the provided PLATFORM FACTS for `ios_files_scan` or `ios_notes_scan`. While this is generally how iOS scanners function, it is not a stated fact."
+      ]
+    },
+    "attempts": 1,
+    "related": [
+      "best-free-pdf-scanner-app",
+      "scan-receipt-on-iphone",
+      "scan-passport-photo-for-application"
+    ],
+    "content_changed_at": "2026-10-11T06:52:34Z",
+    "changed_this_run": false
+  },
+  {
+    "slug": "scan-passport-photo-for-application",
+    "keyword": "scan passport photo for application",
+    "title": "Scan a Passport Photo for Visa Application on iPhone",
+    "intent": "task_howto",
+    "url": "https://sanibha.example/guides/scan-passport-photo-for-application",
+    "words": 1112,
+    "max_jaccard": 0.0084,
+    "max_cosine": 0.8427,
+    "closest_page": "scan-receipt-on-iphone",
+    "judge": {
+      "specificity": 5,
+      "usefulness": 4,
+      "accuracy_risk": 4,
+      "swap_test": "pass",
+      "problems": [
+        "\"Review the automatic crop and make any minor adjustments to ensure the photo meets your specific application's requirements for head size and margin.\" (in steps, step 3, detail) - The app facts for 'id_photo' do not state that users can \"make any minor adjustments\" to the crop. It only says it \"Crops a photo to common passport and visa sizes\".",
+        "\"Ensure a clean, well-defined capture for your photo with automatic edge detection, which crops and straightens the image as you shoot.\" (in feature_points, feature_id: auto_edge, benefit) - The 'auto_edge' feature is described for \"page borders\" and \"the page\". Applying it to a \"photo\" (specifically a passport photo) is a misapplication of the feature's description. The 'id_photo' feature already covers cropping for passport photos."
+      ]
+    },
+    "attempts": 2,
+    "related": [
+      "scan-document-without-an-app",
+      "scan-business-card-to-contacts",
+      "best-free-pdf-scanner-app",
+      "remove-shadow-from-scanned-document"
+    ],
+    "content_changed_at": "2026-10-11T06:56:27Z",
+    "changed_this_run": false
+  },
+  {
+    "slug": "scan-receipt-on-iphone",
+    "keyword": "scan receipt on iPhone",
+    "title": "How to Scan Receipts on iPhone for Expenses",
+    "intent": "task_howto",
+    "url": "https://sanibha.example/guides/scan-receipt-on-iphone",
+    "words": 996,
+    "max_jaccard": 0.0076,
+    "max_cosine": 0.8941,
+    "closest_page": "scan-document-without-an-app",
+    "judge": {
+      "specificity": 5,
+      "usefulness": 5,
+      "accuracy_risk": 5,
+      "swap_test": "pass",
+      "problems": []
+    },
+    "attempts": 1,
+    "related": [
+      "scan-business-card-to-contacts",
+      "ocr-handwriting-iphone",
+      "sign-pdf-on-iphone-free"
+    ],
+    "content_changed_at": "2026-10-11T06:48:41Z",
+    "changed_this_run": false
+  },
+  {
+    "slug": "sign-pdf-on-iphone-free",
+    "keyword": "sign PDF on iPhone free",
+    "title": "How to Sign a PDF on iPhone for Free",
+    "intent": "task_howto",
+    "url": "https://sanibha.example/guides/sign-pdf-on-iphone-free",
+    "words": 1059,
+    "max_jaccard": 0.0102,
+    "max_cosine": 0.8878,
+    "closest_page": "scan-document-without-an-app",
+    "judge": {
+      "specificity": 5,
+      "usefulness": 5,
+      "accuracy_risk": 5,
+      "swap_test": "pass",
+      "problems": []
+    },
+    "attempts": 1,
+    "related": [
+      "compress-pdf-file-size-free",
+      "best-free-pdf-scanner-app",
+      "convert-pdf-to-word-free"
+    ],
+    "content_changed_at": "2026-10-11T07:08:53Z",
+    "changed_this_run": false
+  }
+]

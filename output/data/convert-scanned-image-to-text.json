@@ -1,0 +1,208 @@
+{
+  "record": {
+    "keyword": "convert scanned image to text",
+    "app_id": "doc-scanner",
+    "slug": "convert-scanned-image-to-text",
+    "tokens": [
+      "convert",
+      "scanned",
+      "image",
+      "text"
+    ],
+    "platform": "any",
+    "wants_free": false,
+    "intent_guess": "conversion",
+    "action": "convert",
+    "source_format": "image",
+    "target_format": "text",
+    "candidate_features": [
+      "auto_edge",
+      "batch_scan",
+      "enhance_filters",
+      "ocr"
+    ],
+    "cluster_id": 0,
+    "siblings": [
+      "ocr-handwriting-iphone",
+      "scan-document-without-an-app",
+      "remove-shadow-from-scanned-document"
+    ],
+    "merged_keywords": []
+  },
+  "brief": {
+    "slug": "convert-scanned-image-to-text",
+    "intent_type": "conversion",
+    "searcher_goal": "Extract selectable, copyable plain text from a photo or scan of printed words without paying or uploading confidential documents.",
+    "scenario": "A user has captured a printed article, contract page, or book excerpt on their iPhone and needs the raw text copied to their clipboard or saved as a text file instead of retyping it manually.",
+    "unique_angle": "Step-by-step extraction of clean, printed text from images to plain text (.txt) or clipboard via free on-device processing, explaining the difference between extracting raw text and formatting it as a Word document.",
+    "must_answer": [
+      "How do you run OCR on an existing photo or scan to extract text on iPhone?",
+      "Can you export the extracted text as a .txt file or copy it to the clipboard for free?",
+      "Does extracting text from an image require uploading your file to a remote cloud server?",
+      "How does on-device OCR compare to using built-in iOS Live Text in the Photos app?",
+      "What filter adjustments help improve OCR accuracy on low-contrast printed images?"
+    ],
+    "exclusions": [
+      {
+        "topic": "OCR challenges specifically related to handwritten or cursive notes",
+        "owner_slug": "ocr-handwriting-iphone"
+      },
+      {
+        "topic": "Exporting OCR text into formatted Word (.docx) documents or comparing desktop Word licensing",
+        "owner_slug": "convert-pdf-to-word-free"
+      },
+      {
+        "topic": "Fixing lighting artifacts and hand shadows before scanning",
+        "owner_slug": "remove-shadow-from-scanned-document"
+      }
+    ],
+    "feature_ids": [
+      "ocr",
+      "enhance_filters",
+      "privacy_ondevice",
+      "share_export"
+    ],
+    "platform_fact_ids": [
+      "ios_live_text",
+      "online_converters",
+      "google_docs_pdf"
+    ],
+    "related_slugs": [
+      "ocr-handwriting-iphone",
+      "convert-pdf-to-word-free",
+      "remove-shadow-from-scanned-document",
+      "scan-document-without-an-app"
+    ],
+    "ambiguity_note": "The user may want either raw plain text (.txt / clipboard copy) or an editable, formatted word processor document (.docx). The page prioritizes free plain text extraction via on-device OCR and clearly points users seeking full .docx conversion to the Word conversion guide."
+  },
+  "content": {
+    "title": "Convert Scanned Image to Text on iPhone",
+    "meta_description": "Convert scanned images to plain text on iPhone. Run free on-device OCR on printed photos, copy text to your clipboard, or export clean .txt files locally.",
+    "h1": "How to Convert Scanned Images to Text",
+    "quick_answer": "To convert a scanned image to text, open the image in Document Scanner & PDF Toolkit, apply a high-contrast filter, and run on-device OCR. The app extracts printed letters locally on your iPhone or iPad, letting you copy plain text to your clipboard or export a .txt file for free.",
+    "intro": [
+      "You photographed a printed contract, book excerpt, or newspaper clipping with your iPhone, but retyping those paragraphs by hand is tedious. Converting the scanned image directly into machine-readable characters lets you paste quotations, edit paragraphs, or index physical paperwork inside your digital notes.",
+      "Text conversion falls into two categories: extracting raw unformatted characters, or generating fully structured word processor files. If you only need plain text, you can copy the words directly to your clipboard or save a .txt file at no cost. If you need preserved margins, fonts, and tables, see our guide on how to convert PDF to Word free.",
+      "This walkthrough explains how to convert printed scans and photos into plain text on iOS, refine faint print with filters, and verify your files remain private on your device."
+    ],
+    "steps_heading": "Steps to Convert a Scanned Image to Plain Text",
+    "steps": [
+      {
+        "title": "Load or capture your printed scan",
+        "detail": "Bring in a picture of printed pages from your photo library or photograph a document with your camera. Check that the page edges are aligned and all printed paragraphs remain visible in the frame."
+      },
+      {
+        "title": "Apply an enhancement filter for print clarity",
+        "detail": "Choose the Black & White or Grayscale filter to turn discolored paper bright white and darken faded typography. Clear visual contrast between ink and background prevents the recognition engine from misinterpreting print defects as commas or periods."
+      },
+      {
+        "title": "Run local text recognition",
+        "detail": "Start the OCR tool on your prepared image. The system processes printed character shapes directly on your iPhone or iPad hardware, which means your text remains private and never uploads to an external server."
+      },
+      {
+        "title": "Copy words or export a plain text file",
+        "detail": "Select your recognized text from the preview screen. Copy the plain character output straight to your iOS clipboard for immediate pasting, or export it as a standalone .txt file to Files, Mail, or AirDrop."
+      }
+    ],
+    "alternatives_heading": "Alternative Ways to Extract Text from Scanned Images",
+    "alternatives": [
+      {
+        "method": "Apple Photos Live Text",
+        "how": "On iOS 15 or later with an iPhone XS/XR or newer, open a photo of printed text in the Photos app, press and hold your finger on the words, and tap Copy.",
+        "best_for": "Quickly grabbing individual snippets, phone numbers, or email addresses from casual photos without opening another tool.",
+        "limitation": "Live Text lacks document cleanup filters to sharpen low-contrast print and cannot export the recognized passage directly as a standalone .txt file."
+      },
+      {
+        "method": "Google Docs via Google Drive",
+        "how": "Upload your scanned image or PDF to Google Drive in a web browser, right-click the uploaded file, and select Open with > Google Docs.",
+        "best_for": "Converting scanned printed documents from a desktop computer when you already store files in Google Drive.",
+        "limitation": "Requires sending documents to Google's cloud servers, and converted output frequently scrambles original page layouts."
+      },
+      {
+        "method": "Browser-based online OCR portals",
+        "how": "Open a web browser, upload your document image to a free converter site, process the file, and download the resulting text.",
+        "best_for": "One-off conversions on shared computers without built-in recognition software.",
+        "limitation": "Transfers sensitive contracts and personal records to third-party web servers, while free tiers often impose daily conversion caps and file size restrictions."
+      }
+    ],
+    "features_heading": "Document Scanner Features for Scanned Image OCR",
+    "feature_points": [
+      {
+        "feature_id": "ocr",
+        "benefit": "Recognises printed text across scans and photos, enabling you to copy the extracted characters or export a .txt document at zero cost."
+      },
+      {
+        "feature_id": "enhance_filters",
+        "benefit": "One-tap Black & White and Grayscale filters maximize contrast between ink and paper, helping the recognition tool process faint or aged print cleanly."
+      },
+      {
+        "feature_id": "privacy_ondevice",
+        "benefit": "Processes recognition algorithms directly on your iPhone processor, keeping confidential contracts, invoices, and records stored locally."
+      },
+      {
+        "feature_id": "share_export",
+        "benefit": "Transfers your converted .txt files and visual scans directly through AirDrop, Mail, or iOS Files to your computer or cloud storage."
+      }
+    ],
+    "tips_heading": "Tips for Accurate Printed Text Conversion",
+    "tips": [
+      "Boost ink contrast with Black & White: Converting aged or yellowed pages with the Black & White filter darkens faded lettering and removes paper discoloration, improving character accuracy.",
+      "For handwritten journals or notes, read our guide on OCR handwriting on iPhone, since cursive and irregular script require distinct handling compared to machine-printed text.",
+      "If shadows from your phone or overhead lighting fall across printed lines, review our guide on how to remove shadow from scanned document to balance the lighting.",
+      "Remember that extracting raw plain text (.txt) is free, while exporting to formatted Word (.docx) files with preserved page layouts is a Pro feature in the app.",
+      "Position your phone parallel to the printed page: angling your camera skews vertical letter strokes, which can cause the engine to misidentify narrow letters like 'l' and 'i'."
+    ],
+    "faqs": [
+      {
+        "question": "How do I extract readable text from a printed document scan on iOS?",
+        "answer": "Import the image into Document Scanner & PDF Toolkit, apply a high-contrast filter like Black & White to sharpen letter borders, and select the OCR option. The on-device engine converts printed character shapes into editable text that you can immediately copy or save."
+      },
+      {
+        "question": "What are the free export choices for text extracted from scanned images?",
+        "answer": "You can copy all recognized text straight to your clipboard or export it as a plain .txt file for free. Exporting scans into structured, editable Word (.docx) documents with original paragraph formatting requires the Pro upgrade."
+      },
+      {
+        "question": "Are scanned documents uploaded to external servers during text conversion?",
+        "answer": "No. Text recognition in Document Scanner & PDF Toolkit operates entirely on your iPhone or iPad hardware. Your files and converted text remain stored on your device unless you manually choose to send them to an external cloud service."
+      },
+      {
+        "question": "Why use a dedicated scanner tool rather than Live Text in Apple Photos?",
+        "answer": "While Live Text lets you highlight words in your photo roll, a dedicated scanner tool lets you apply Black & White filters to rescue faint print, run OCR across entire multi-page scans, and export the output directly as an organized .txt document."
+      },
+      {
+        "question": "Which image filters make low-contrast printed scans easier for OCR to read?",
+        "answer": "The Black & White and Grayscale filters work best for printed documents. They eliminate background tint, flatten paper texture, and darken faded ink strokes, giving the character recognition system distinct edges to evaluate."
+      }
+    ],
+    "cta": {
+      "heading": "Convert Scanned Images to Plain Text on iOS",
+      "text": "Install Document Scanner & PDF Toolkit to extract printed words from photos and scans directly on your iPhone or iPad without uploading files to remote servers."
+    }
+  },
+  "qa": {
+    "passed": true,
+    "errors": [],
+    "warnings": [],
+    "metrics": {
+      "words": 1080,
+      "keyword_coverage": 1.0,
+      "max_jaccard": 0.0135,
+      "max_jaccard_with": "convert-pdf-to-word-free",
+      "max_cosine": 0.9292,
+      "max_cosine_with": "ocr-handwriting-iphone",
+      "shared_sentences": 0,
+      "writer_model": "gemini-3.8-flash",
+      "judge_model": "gemini-3.5-flash"
+    },
+    "overlaps": []
+  },
+  "judge": {
+    "specificity": 5,
+    "usefulness": 5,
+    "accuracy_risk": 5,
+    "swap_test": "pass",
+    "problems": []
+  },
+  "attempts": 1,
+  "input_hash": "a03e1cec7f2f4795"
+}

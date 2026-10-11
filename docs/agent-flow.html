@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>pSEO Agent Flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: node-editor canvas (dotted grid, wired nodes) on top; inspector + run console side by side below. */
+:root {
+  --bg: #eef0f3;
+  --canvas: #f7f8fa;
+  --dot: #d3d7de;
+  --node: #ffffff;
+  --node-line: #cfd4dc;
+  --ink: #161a22;
+  --ink-2: #4d5463;
+  --ink-3: #808796;
+  --wire: #9aa1ae;
+  --panel: #ffffff;
+  --rule: #dde1e7;
+  --t-trigger: #eb6834;
+  --t-rules: #7a8191;
+  --t-ai: #2a78d6;
+  --t-code: #1baf7a;
+  --t-store: #c98500;
+  --t-fail: #c8433a;
+  --ok: #1d7f47;
+  --ok-soft: #e4f3ea;
+  --bad: #b8402f;
+  --bad-soft: #f8e9e6;
+  --flag: #946400;
+  --flag-soft: #f7efd9;
+  --hi: #2a78d6;
+  --hi-soft: rgba(42, 120, 214, .14);
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #101318; --canvas: #161a21; --dot: #2a303b; --node: #1f242d; --node-line: #343b47; --ink: #eceef2; --ink-2: #b2b8c4; --ink-3: #8a91a0;
+    --wire: #5d6574; --panel: #1a1e26; --rule: #2c323d;
+    --t-trigger: #d95926; --t-rules: #8a91a0; --t-ai: #3987e5; --t-code: #199e70; --t-store: #c98500; --t-fail: #e66767;
+    --ok: #5cc48a; --ok-soft: #17301f; --bad: #e7816f; --bad-soft: #3a211d; --flag: #e2b44f; --flag-soft: #33290f;
+    --hi: #5b9cea; --hi-soft: rgba(91, 156, 234, .18);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #101318; --canvas: #161a21; --dot: #2a303b; --node: #1f242d; --node-line: #343b47; --ink: #eceef2; --ink-2: #b2b8c4; --ink-3: #8a91a0;
+  --wire: #5d6574; --panel: #1a1e26; --rule: #2c323d;
+  --t-trigger: #d95926; --t-rules: #8a91a0; --t-ai: #3987e5; --t-code: #199e70; --t-store: #c98500; --t-fail: #e66767;
+  --ok: #5cc48a; --ok-soft: #17301f; --bad: #e7816f; --bad-soft: #3a211d; --flag: #e2b44f; --flag-soft: #33290f;
+  --hi: #5b9cea; --hi-soft: rgba(91, 156, 234, .18);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.55; margin: 0; }
+.wrap { max-width: 96rem; margin: 0 auto; padding-inline: 16px; padding-block: 24px 48px; display: grid; gap: 16px; }
+header { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; }
+header > div { display: grid; gap: 4px; min-width: 0; max-width: 46rem; }
+h1 { font-family: var(--display); font-size: clamp(1.6rem, 3.4vw, 2.3rem); font-weight: 700; letter-spacing: -0.015em; margin: 0; text-wrap: balance; line-height: 1.15; }
+.sub { color: var(--ink-2); margin: 0; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+button { font: 500 0.88rem var(--body); border-radius: 8px; border: 1px solid var(--node-line); background: var(--node); color: var(--ink); padding: 7px 14px; cursor: pointer; }
+button.primary { background: var(--hi); border-color: var(--hi); color: #fff; }
+button:disabled { opacity: .45; cursor: default; }
+:focus-visible { outline: 2px solid var(--hi); outline-offset: 2px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.8rem; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 12px; height: 12px; border-radius: 3px; display: block; }
+.legend .dash { width: 22px; height: 0; border-top: 2px dashed var(--wire); border-radius: 0; }
+.legend .loop { width: 22px; height: 0; border-top: 2px solid var(--t-fail); border-radius: 0; }
+
+.canvas { background-color: var(--canvas); background-image: radial-gradient(var(--dot) 1.2px, transparent 1.2px); background-size: 20px 20px; border: 1px solid var(--rule); border-radius: 12px; overflow-x: auto; }
+.canvas svg { display: block; width: 100%; min-width: 1150px; height: auto; }
+svg text { font-family: var(--body); }
+.node rect.box { fill: var(--node); stroke: var(--node-line); stroke-width: 1.2; transition: stroke .2s, filter .2s; }
+.node { cursor: pointer; }
+.node:hover rect.box, .node:focus rect.box { stroke: var(--ink-3); }
+.node:focus { outline: none; }
+.node.sel rect.box { stroke: var(--hi); stroke-width: 2.4; }
+.node.active rect.box { stroke: var(--hi); stroke-width: 3; }
+.node.pass rect.box { stroke: var(--ok); stroke-width: 3; }
+.node.fail rect.box { stroke: var(--bad); stroke-width: 3; }
+.node.flag rect.box { stroke: var(--flag); stroke-width: 3; }
+.node .title { font-size: 13.5px; font-weight: 600; fill: var(--ink); }
+.node .kind { font-family: var(--mono); font-size: 10.5px; fill: var(--ink-3); letter-spacing: .04em; }
+.node .badge { font-family: var(--mono); font-size: 11px; font-weight: 500; fill: #fff; }
+.node .status { font-family: var(--mono); font-size: 10.5px; font-weight: 600; }
+.wire { fill: none; stroke: var(--wire); stroke-width: 1.8; }
+.wire.data { stroke-dasharray: 5 5; }
+.wire.loop { stroke: var(--t-fail); stroke-width: 2; }
+.wire.loop.data { stroke-dasharray: 6 5; }
+.wire.lit { stroke: var(--hi); stroke-width: 3; }
+.wire.loop.lit { stroke: var(--t-fail); stroke-width: 3.2; }
+.elabel { font-family: var(--mono); font-size: 10.5px; fill: var(--ink-2); }
+.elabel-bg { fill: var(--canvas); }
+.elabel.loop { fill: var(--t-fail); }
+.token { fill: var(--hi); }
+
+.below { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 860px) { .below { grid-template-columns: 1fr; } }
+.panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 12px; padding: 18px 20px; display: grid; gap: 12px; min-width: 0; }
+.panel h2 { font-family: var(--display); font-size: 1.3rem; margin: 0; font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }
+.kindtag { font-family: var(--mono); font-size: 0.72rem; letter-spacing: .06em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; color: #fff; justify-self: start; }
+.panel p { margin: 0; }
+dl { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: 8px 14px; margin: 0; font-size: 0.92rem; }
+dt { font-family: var(--mono); font-size: 0.74rem; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); padding-top: 3px; }
+dd { margin: 0; color: var(--ink-2); min-width: 0; overflow-wrap: anywhere; }
+dd code { font-family: var(--mono); font-size: 0.86em; background: var(--bg); padding: 1px 5px; border-radius: 4px; }
+@media (max-width: 480px) { dl { grid-template-columns: 1fr; gap: 2px; } dd { margin-bottom: 8px; } }
+.console { font-family: var(--mono); font-size: 0.8rem; background: var(--bg); border-radius: 8px; padding: 10px 12px; min-height: 16rem; max-height: 26rem; overflow-y: auto; display: grid; gap: 6px; align-content: start; }
+.line { display: grid; grid-template-columns: 4.6rem minmax(0, 1fr); gap: 8px; }
+.line .tag { font-weight: 600; }
+.line .msg { color: var(--ink-2); overflow-wrap: anywhere; }
+.tag.ok { color: var(--ok); } .tag.bad { color: var(--bad); } .tag.flag { color: var(--flag); } .tag.info { color: var(--ink-3); }
+.empty { color: var(--ink-3); font-family: var(--body); font-size: 0.9rem; }
+.note { font-size: 0.82rem; color: var(--ink-3); }
+@media (prefers-reduced-motion: reduce) { .node rect.box { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>pSEO agent flow</h1>
+      <p class="sub">How a keyword becomes a published page. Click any node to see what it does, or press Play to watch one real keyword go through it, including the drafts that were rejected and sent back.</p>
+    </div>
+    <div class="toolbar">
+      <button class="primary" id="play" type="button">Play one keyword</button>
+      <button id="step" type="button">Step</button>
+      <button id="reset" type="button">Reset</button>
+    </div>
+  </header>
+  <div class="legend" aria-label="Legend">
+    <span><i style="background:var(--t-trigger)"></i>trigger</span>
+    <span><i style="background:var(--t-rules)"></i>rules (no AI)</span>
+    <span><i style="background:var(--t-ai)"></i>AI call (Gemini)</span>
+    <span><i style="background:var(--t-code)"></i>code check / output</span>
+    <span><i style="background:var(--t-store)"></i>stored data</span>
+    <span><i style="background:var(--t-fail)"></i>held back</span>
+    <span><i class="loop"></i>revision loop</span>
+    <span><i class="dash"></i>reads / writes data</span>
+  </div>
+  <div class="canvas"><svg id="svg" viewBox="0 0 1600 660" role="img" aria-label="Pipeline: schedule, ingest, cluster, plan, write, checks, editor, save, corpus sweep, render, report. Failed checks loop back to write, up to two revisions, then quarantine."></svg></div>
+  <div class="below">
+    <div class="panel" id="inspector" aria-live="polite"></div>
+    <div class="panel">
+      <h2>Run console</h2>
+      <p class="note">Replays the stored history of <code style="font-family:var(--mono)">convert scanned image to text</code>, the page closest to another page. Condensed from runs #3 and #6; print the full version with <code style="font-family:var(--mono)">./run.sh explain convert-scanned-image-to-text</code>.</p>
+      <div class="console" id="console"><span class="empty">Press Play or Step to start.</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const NODES = {
+  trigger: { x: 20, y: 120, kind: "trigger", badge: "⏱", title: "Schedule", sub: "cron or ./run.sh run",
+    what: "Starts a run. In production GitHub Actions runs it every day; locally it is ./run.sh run. A file lock stops two runs overlapping.",
+    input: "Nothing. The keyword list is read in the next step.", output: "A new run record, plus a heartbeat ping so a missed run is noticed.",
+    example: "Run #7: 0 pages to generate, 12 unchanged, so nothing was regenerated.", file: ".github/workflows/pseo.yml, src/pseo/ops.py",
+    fail: "If the run never starts, the heartbeat service alerts because the expected ping never arrives." },
+  keywords: { x: 20, y: 340, kind: "store", badge: "CSV", title: "keywords.csv", sub: "12 keywords",
+    what: "The input list: one keyword per row with the app it belongs to. Edited by hand or with ./run.sh add / remove / replace.",
+    input: "You.", output: "Rows of keyword + app_id.", example: "convert scanned image to text, doc-scanner", file: "data/keywords.csv, src/pseo/keyword_admin.py",
+    fail: "Unknown app or exact duplicate rows are skipped with a warning in the report." },
+  ingest: { x: 250, y: 120, kind: "rules", badge: "R", title: "1 Ingest", sub: "rules, no AI",
+    what: "Turns each keyword into a structured record with plain rules, so these fields never change between runs.",
+    input: "A keyword.", output: "Slug (URL), intent guess, iPhone?, wants free?, source → target format, app features whose trigger words appear.",
+    example: "convert-scanned-image-to-text · intent: conversion · image → text · candidate features: OCR, filters", file: "src/pseo/keywords.py",
+    fail: "Nothing to fail; bad rows are skipped." },
+  cluster: { x: 480, y: 120, kind: "ai", badge: "E", title: "2 Cluster", sub: "embeddings",
+    what: "Embeds every keyword (turns meaning into numbers) and compares them. Near-identical keywords merge into one page; close ones become siblings that must be planned apart.",
+    input: "All keyword records.", output: "Merges, sibling lists, internal-link candidates.",
+    example: "Siblings of 'convert scanned image to text': OCR handwriting iPhone (closest), scan document without an app, remove shadow from scanned document.", file: "src/pseo/cluster.py",
+    fail: "No merges this time: no pair was above 0.96. 16 sibling pairs were found." },
+  plan: { x: 710, y: 120, kind: "ai", badge: "AI", title: "3 Plan", sub: "planner AI",
+    what: "One AI call sees all related keywords together and writes a brief for each: search intent, unique angle, questions to answer, and which page owns each shared topic.",
+    input: "Sibling keywords, link candidates, briefs of already-published pages, all fact sheets.", output: "A brief per keyword (PageBrief JSON).",
+    example: "Angle: printed text → plain .txt or clipboard, on-device and free. Leaves handwriting to /ocr-handwriting-iphone and .docx export to /convert-pdf-to-word-free.", file: "src/pseo/agents.py, prompts/plan.md",
+    fail: "A failed planning call fails only its batch; 3 failures in a row trip the circuit breaker." },
+  facts: { x: 480, y: 340, kind: "store", badge: "YML", title: "Fact sheets", sub: "app + iOS facts",
+    what: "The only allowed source of claims. App features (and which are Pro), plus facts about iOS tools and other options for the alternatives section.",
+    input: "Maintained by hand. The app sheet is assumed for this assignment.", output: "The planner sees all facts; the writer sees only the facts its brief selected.",
+    example: "word_open_pdf: desktop Word can convert PDFs but needs a paid licence. Correcting this one fact regenerated only the one page that cites it.", file: "data/apps/doc-scanner.yaml, data/platform_facts.yaml",
+    fail: "Not a step; changes here trigger regeneration of exactly the pages that use the changed fact." },
+  write: { x: 940, y: 120, kind: "ai", badge: "AI", title: "4 Write", sub: "writer AI",
+    what: "Writes the page into the fixed 10-section template as structured JSON. On a revision it gets the previous draft plus the exact reasons it failed.",
+    input: "The brief, its facts, the sibling pages it must not repeat, and on revisions the failure reasons.", output: "PageContent JSON: title, quick answer, steps, alternatives, features, tips, FAQs, call to action.",
+    example: "Draft 1 → rejected. Draft 2 → rejected. Draft 3 → passed.", file: "src/pseo/agents.py, prompts/write.md",
+    fail: "Overloaded or out of quota: switches to the next model in the chain. Timeout: 180 s, then retry." },
+  checks: { x: 1170, y: 120, kind: "code", badge: "{ }", title: "5a Checks", sub: "code, vs all pages",
+    what: "Code checks every draft against every published page: shared 5-word phrases, copied sentences, similar meaning, similar FAQ questions, near-identical titles. Plus rules: length, keyword in title, banned filler, over-claims, Pro features called free.",
+    input: "The draft, its embeddings, the whole published corpus from the database.", output: "Pass, or a list of exact errors.",
+    example: "Draft 1 failed: too close in meaning to /ocr-handwriting-iphone (0.932, limit 0.93).", file: "src/pseo/quality.py, src/pseo/similarity.py",
+    fail: "Errors go back to Write as instructions. After 2 failed revisions the page is quarantined." },
+  editor: { x: 1400, y: 120, kind: "ai", badge: "AI", title: "5b Editor", sub: "second AI model",
+    what: "A different AI model reviews the page like a strict editor: specificity, usefulness, accuracy risk, and the swap test (would the page still read fine for a sibling keyword?).",
+    input: "The draft, its brief, sibling keywords.", output: "Scores 1–5, swap test pass/fail, concrete problems.",
+    example: "Final draft: specificity 5, usefulness 5, accuracy 5, swap test pass. Earlier it caught an invented 'OCR button' on another page.", file: "src/pseo/agents.py, prompts/judge.md",
+    fail: "Any score under 4 or a failed swap test sends the problems back to Write." },
+  quarantine: { x: 1170, y: 340, kind: "fail", badge: "✕", title: "Quarantine", sub: "held back",
+    what: "Where a page goes if it still fails after 2 revisions. It is not published, it is listed in the report, and the run alerts if too many end up here.",
+    input: "The last failing draft and its errors.", output: "output/quarantine/<slug>.json for a human to look at.",
+    example: "0 pages quarantined in the final corpus.", file: "src/pseo/pipeline.py",
+    fail: "More than 25% of attempted pages quarantined marks the run degraded (exit code 2 + alert)." },
+  store: { x: 940, y: 340, kind: "store", badge: "DB", title: "State (SQLite)", sub: "pipeline memory",
+    what: "Remembers every page: its inputs hash, content, word fingerprints, embeddings, FAQ vectors and every QA event. This is what makes runs incremental and lets checks compare against all pages ever published.",
+    input: "Saved pages and run events.", output: "The corpus for duplicate checks; the history for ./run.sh explain.",
+    example: "9 rejected drafts across all runs are recorded here, with reasons.", file: "src/pseo/store.py, state/pseo.sqlite",
+    fail: "Committed back to git after scheduled runs, so state is versioned with the pages." },
+  save: { x: 1400, y: 340, kind: "code", badge: "✓", title: "Save page", sub: "status: passed",
+    what: "Stores the passing page with its input hash, so the next run skips it unless something it depends on changes.",
+    input: "The passing draft.", output: "A row in the database with status passed.", example: "convert-scanned-image-to-text saved after draft 3.", file: "src/pseo/pipeline.py",
+    fail: "—" },
+  sweep: { x: 1400, y: 560, kind: "code", badge: "⇄", title: "6 Corpus sweep", sub: "all pairs",
+    what: "After all pages are written, compares every published page with every other one, including FAQ questions. Pages written in parallel never saw each other, and thresholds can change; this catches both.",
+    input: "Every published page.", output: "Clean, or the newer page of a clashing pair sent back to Write with the reason.",
+    example: "Flagged 2 FAQ questions shared with the handwriting page (0.948, 0.949). The page was revised and passed.", file: "src/pseo/pipeline.py (_sweep)",
+    fail: "If the revision still clashes, that page is quarantined." },
+  render: { x: 1170, y: 560, kind: "code", badge: "</>", title: "7 Render", sub: "HTML · MD · JSON",
+    what: "Turns every passing page into HTML (with canonical URL and HowTo/FAQ structured data), Markdown and JSON, plus index.html and sitemap.xml. Only links to pages that are actually published.",
+    input: "Passed pages from the database.", output: "output/pages/, output/data/, sitemap.xml.", example: "convert-scanned-image-to-text.html, linked from 4 related pages.", file: "src/pseo/render.py, templates/",
+    fail: "Re-runnable on its own with ./run.sh render (no AI calls)." },
+  report: { x: 940, y: 560, kind: "code", badge: "≡", title: "8 Report", sub: "report.md",
+    what: "Writes the run report: duplicate metrics for all 66 page pairs, editor scores, and every rejection and incident from every run.",
+    input: "The database.", output: "output/report.md, output/similarity.csv, output/runs/.", example: "Max shared wording 0.018 (limit 0.12). Closest meaning 0.929 (limit 0.93).", file: "src/pseo/report.py",
+    fail: "A report bug marks the run degraded instead of hiding it." },
+  alerts: { x: 710, y: 560, kind: "trigger", badge: "!", title: "Alerts", sub: "exit code, webhook",
+    what: "Decides the run's status and tells someone. OK: heartbeat success. Degraded, aborted or crashed: Slack/Discord alert with reasons, heartbeat fail, non-zero exit code so the GitHub job fails.",
+    input: "Run status and problems.", output: "Exit code 0 / 1 / 2 / 3, webhook message, heartbeat ping.", example: "Run #1 aborted when the daily quota ran out; the next run finished only the 3 missing pages.", file: "src/pseo/ops.py, src/pseo/cli.py",
+    fail: "—" },
+};
+const W = 172, H = 64;
+const port = (id, side) => {
+  const n = NODES[id];
+  if (side === "r") return [n.x + W, n.y + H / 2];
+  if (side === "l") return [n.x, n.y + H / 2];
+  if (side === "t") return [n.x + W / 2, n.y];
+  if (side === "b") return [n.x + W / 2, n.y + H];
+};
+const hcurve = (a, b) => { const dx = Math.max(40, Math.abs(b[0] - a[0]) / 2); const s = b[0] >= a[0] ? 1 : -1; return `M${a[0]},${a[1]} C${a[0] + dx * s},${a[1]} ${b[0] - dx * s},${b[1]} ${b[0]},${b[1]}`; };
+const vcurve = (a, b) => { const dy = Math.max(30, Math.abs(b[1] - a[1]) / 2); const s = b[1] >= a[1] ? 1 : -1; return `M${a[0]},${a[1]} C${a[0]},${a[1] + dy * s} ${b[0]},${b[1] - dy * s} ${b[0]},${b[1]}`; };
+const EDGES = [
+  { id: "e-tr-in", d: () => hcurve(port("trigger", "r"), port("ingest", "l")), label: "start", lx: 221, ly: 144 },
+  { id: "e-kw-in", d: () => "M192,372 C270,372 336,280 336,184", cls: "data", label: "reads", lx: 300, ly: 300 },
+  { id: "e-in-cl", d: () => hcurve(port("ingest", "r"), port("cluster", "l")), label: "records", lx: 451, ly: 144 },
+  { id: "e-cl-pl", d: () => hcurve(port("cluster", "r"), port("plan", "l")), label: "siblings", lx: 681, ly: 144 },
+  { id: "e-pl-wr", d: () => hcurve(port("plan", "r"), port("write", "l")), label: "briefs", lx: 911, ly: 144 },
+  { id: "e-wr-ch", d: () => hcurve(port("write", "r"), port("checks", "l")), label: "draft", lx: 1141, ly: 144 },
+  { id: "e-ch-ed", d: () => hcurve(port("checks", "r"), port("editor", "l")), label: "pass", lx: 1371, ly: 144 },
+  { id: "e-ch-wr", d: () => "M1256,120 C1256,70 1040,70 1040,120", cls: "loop", label: "fail → errors as instructions", lx: 1148, ly: 70 },
+  { id: "e-ed-wr", d: () => "M1486,120 C1486,24 1010,24 1010,120", cls: "loop", label: "fail → editor's problems", lx: 1248, ly: 28 },
+  { id: "e-ed-sv", d: () => vcurve(port("editor", "b"), port("save", "t")), label: "pass", lx: 1486, ly: 266 },
+  { id: "e-ch-q", d: () => vcurve([1290, 184], [1290, 340]), cls: "loop data", label: "after 2 revisions", lx: 1290, ly: 290 },
+  { id: "e-ed-q", d: () => "M1420,184 C1400,260 1380,300 1342,360", cls: "loop data" },
+  { id: "e-st-ch", d: () => "M1080,340 C1080,280 1200,260 1200,184", cls: "data", label: "corpus", lx: 1176, ly: 300 },
+  { id: "e-sv-st", d: () => "M1430,404 C1430,470 1040,470 1040,404", cls: "data", label: "writes page", lx: 1236, ly: 462 },
+  { id: "e-fa-pl", d: () => "M566,340 C566,260 796,270 796,184", cls: "data", label: "all facts", lx: 640, ly: 258 },
+  { id: "e-fa-wr", d: () => "M652,350 C800,335 990,300 1000,184", cls: "data", label: "its facts only", lx: 840, ly: 322 },
+  { id: "e-sv-sw", d: () => vcurve(port("save", "b"), port("sweep", "t")), label: "after all pages", lx: 1486, ly: 512 },
+  { id: "e-sw-wr", d: () => "M1420,560 C1390,505 1141,520 1141,450 L1141,240 C1141,205 1100,200 1090,184", cls: "loop", label: "clash → revise newer page", lx: 1141, ly: 520 },
+  { id: "e-sw-rd", d: () => hcurve(port("sweep", "l"), port("render", "r")), label: "clean", lx: 1371, ly: 586 },
+  { id: "e-rd-rp", d: () => hcurve(port("render", "l"), port("report", "r")), label: "pages", lx: 1141, ly: 586 },
+  { id: "e-rp-al", d: () => hcurve(port("report", "l"), port("alerts", "r")), label: "status", lx: 911, ly: 586 },
+];
+const KIND = { trigger: ["--t-trigger", "trigger"], rules: ["--t-rules", "rules"], ai: ["--t-ai", "AI · Gemini"], code: ["--t-code", "code"], store: ["--t-store", "data"], fail: ["--t-fail", "held back"] };
+
+const svg = document.getElementById("svg");
+const NS = "http://www.w3.org/2000/svg";
+const el = (tag, attrs = {}, parent = svg) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; };
+const defs = el("defs");
+[["arrow", "var(--wire)"], ["arrow-loop", "var(--t-fail)"], ["arrow-hi", "var(--hi)"]].forEach(([id, c]) => {
+  const m = el("marker", { id, viewBox: "0 0 10 10", refX: "9", refY: "5", markerWidth: "7", markerHeight: "7", orient: "auto-start-reverse" }, defs);
+  el("path", { d: "M0,0 L10,5 L0,10 z", style: `fill:${c}` }, m);
+});
+const edgeEls = {};
+const gEdges = el("g");
+EDGES.forEach(e => {
+  const p = el("path", { d: e.d(), class: "wire " + (e.cls || ""), "marker-end": `url(#${(e.cls || "").includes("loop") ? "arrow-loop" : "arrow"})` }, gEdges);
+  edgeEls[e.id] = p;
+});
+const gLabels = el("g");
+EDGES.forEach(e => {
+  if (!e.label) return;
+  const t = el("text", { x: e.lx, y: e.ly, "text-anchor": "middle", class: "elabel" + ((e.cls || "").includes("loop") ? " loop" : "") }, gLabels);
+  t.textContent = e.label;
+  const bb = t.getBBox();
+  const bg = el("rect", { x: bb.x - 4, y: bb.y - 1, width: bb.width + 8, height: bb.height + 2, rx: 3, class: "elabel-bg" }, gLabels);
+  gLabels.insertBefore(bg, t);
+});
+const nodeEls = {};
+const gNodes = el("g");
+Object.entries(NODES).forEach(([id, n]) => {
+  const g = el("g", { class: "node", transform: `translate(${n.x},${n.y})`, tabindex: "0", role: "button", "aria-label": `${n.title}: ${n.sub}` }, gNodes);
+  el("rect", { class: "box", width: W, height: H, rx: 10 }, g);
+  el("rect", { width: 34, height: H, rx: 10, style: `fill:var(${KIND[n.kind][0]})` }, g);
+  el("rect", { x: 24, width: 12, height: H, style: `fill:var(${KIND[n.kind][0]})` }, g);
+  const b = el("text", { x: 17, y: H / 2 + 4, "text-anchor": "middle", class: "badge" }, g); b.textContent = n.badge;
+  const t = el("text", { x: 46, y: 27, class: "title" }, g); t.textContent = n.title;
+  const s = el("text", { x: 46, y: 45, class: "kind" }, g); s.textContent = n.sub;
+  const st = el("text", { x: W - 8, y: -7, "text-anchor": "end", class: "status" }, g);
+  g.addEventListener("click", () => select(id));
+  g.addEventListener("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); select(id); } });
+  nodeEls[id] = { g, st };
+});
+const token = el("circle", { r: 7, class: "token", visibility: "hidden" });
+
+// inspector
+const insp = document.getElementById("inspector");
+let selected = null;
+function select(id) {
+  if (selected) nodeEls[selected].g.classList.remove("sel");
+  selected = id; nodeEls[id].g.classList.add("sel");
+  const n = NODES[id];
+  insp.innerHTML = `<span class="kindtag" style="background:var(${KIND[n.kind][0]})"></span><h2></h2><p class="sub"></p>
+    <dl><dt>Takes</dt><dd data-k="input"></dd><dt>Produces</dt><dd data-k="output"></dd><dt>This run</dt><dd data-k="example"></dd><dt>If it fails</dt><dd data-k="fail"></dd><dt>Code</dt><dd><code data-k="file"></code></dd></dl>`;
+  insp.querySelector(".kindtag").textContent = KIND[n.kind][1];
+  insp.querySelector("h2").textContent = n.title;
+  insp.querySelector(".sub").textContent = n.what;
+  insp.querySelectorAll("[data-k]").forEach(d => d.textContent = n[d.dataset.k]);
+}
+select("checks");
+
+// replay of one keyword (real stored history, condensed)
+const STEPS = [
+  { node: "trigger", tag: "info", text: "Run #3 starts: 3 pages to generate, 9 unchanged (skipped)." },
+  { node: "ingest", edge: "e-tr-in", tag: "info", text: "\"convert scanned image to text\" → /convert-scanned-image-to-text · intent conversion · image → text" },
+  { node: "cluster", edge: "e-in-cl", tag: "info", text: "Closest keyword: OCR handwriting iPhone. Must be planned apart." },
+  { node: "plan", edge: "e-cl-pl", tag: "info", text: "Angle: printed text → .txt or clipboard, on-device. Handwriting is left to /ocr-handwriting-iphone." },
+  { node: "write", edge: "e-pl-wr", tag: "info", text: "Draft 1 written (1,007 words)." },
+  { node: "checks", edge: "e-wr-ch", tag: "bad", st: "fail", text: "REJECTED: too close in meaning to /ocr-handwriting-iphone (0.932, limit 0.93)." },
+  { node: "write", edge: "e-ch-wr", tag: "info", text: "Draft 2: revised with those reasons." },
+  { node: "checks", edge: "e-wr-ch", tag: "bad", st: "fail", text: "REJECTED again: 0.931. One revision left before quarantine." },
+  { node: "write", edge: "e-ch-wr", tag: "info", text: "Draft 3: revised again." },
+  { node: "checks", edge: "e-wr-ch", tag: "ok", st: "pass", text: "PASSED: shared wording 0.008, meaning 0.927, 0 copied sentences." },
+  { node: "editor", edge: "e-ch-ed", tag: "ok", st: "pass", text: "PASSED: specificity 5, usefulness 5, accuracy 5, swap test pass." },
+  { node: "save", edge: "e-ed-sv", tag: "ok", st: "pass", text: "Saved with its input hash. Later runs skip it unless an input changes." },
+  { node: "sweep", edge: "e-sv-sw", tag: "flag", st: "flag", text: "Run #6 sweep FLAGGED: 2 FAQ questions ask the same thing as the handwriting page's (0.948, 0.949)." },
+  { node: "write", edge: "e-sw-wr", tag: "info", text: "Revised with page-specific FAQ questions." },
+  { node: "checks", edge: "e-wr-ch", tag: "ok", st: "pass", text: "PASSED." },
+  { node: "editor", edge: "e-ch-ed", tag: "ok", st: "pass", text: "PASSED." },
+  { node: "save", edge: "e-ed-sv", tag: "ok", st: "pass", text: "Saved." },
+  { node: "sweep", edge: "e-sv-sw", tag: "ok", st: "pass", text: "Clean: no pair over any limit." },
+  { node: "render", edge: "e-sw-rd", tag: "info", text: "HTML + Markdown + JSON written; linked from 4 related pages." },
+  { node: "report", edge: "e-rd-rp", tag: "info", text: "report.md: max shared wording 0.018, closest meaning 0.929." },
+  { node: "alerts", edge: "e-rp-al", tag: "ok", st: "pass", text: "Status ok → heartbeat success, exit code 0, no alert." },
+];
+const consoleEl = document.getElementById("console");
+let i = 0, timer = null;
+const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function clearMarks() {
+  Object.values(nodeEls).forEach(({ g, st }) => { g.classList.remove("active", "pass", "fail", "flag"); st.textContent = ""; });
+  Object.values(edgeEls).forEach(p => { p.classList.remove("lit"); });
+}
+function moveToken(edgeId, done) {
+  const p = edgeEls[edgeId];
+  if (!p || reduce) { done(); return; }
+  const len = p.getTotalLength(); const t0 = performance.now(); const dur = 650;
+  token.setAttribute("visibility", "visible");
+  const tick = now => {
+    const k = Math.min(1, (now - t0) / dur); const pt = p.getPointAtLength(len * k);
+    token.setAttribute("cx", pt.x); token.setAttribute("cy", pt.y);
+    if (k < 1) requestAnimationFrame(tick); else { token.setAttribute("visibility", "hidden"); done(); }
+  };
+  requestAnimationFrame(tick);
+}
+function step() {
+  if (i >= STEPS.length) { stop(); return; }
+  if (i === 0) { consoleEl.innerHTML = ""; clearMarks(); }
+  const s = STEPS[i++];
+  Object.values(edgeEls).forEach(p => p.classList.remove("lit"));
+  if (s.edge) edgeEls[s.edge].classList.add("lit");
+  moveToken(s.edge, () => {
+    Object.values(nodeEls).forEach(({ g }) => g.classList.remove("active"));
+    const ne = nodeEls[s.node];
+    ne.g.classList.remove("pass", "fail", "flag");
+    ne.g.classList.add(s.st || "active");
+    ne.st.textContent = s.st === "pass" ? "PASS" : s.st === "fail" ? "FAIL" : s.st === "flag" ? "FLAGGED" : "";
+    ne.st.style.fill = s.st === "pass" ? "var(--ok)" : s.st === "fail" ? "var(--bad)" : "var(--flag)";
+    select(s.node);
+    const line = document.createElement("div"); line.className = "line";
+    const tagText = { ok: "PASS", bad: "FAIL", flag: "FLAG", info: "·" }[s.tag];
+    line.innerHTML = `<span class="tag ${s.tag}">${tagText} ${String(i).padStart(2, "0")}</span><span class="msg"></span>`;
+    line.querySelector(".msg").textContent = `[${NODES[s.node].title}] ${s.text}`;
+    consoleEl.appendChild(line); consoleEl.scrollTop = consoleEl.scrollHeight;
+    if (i >= STEPS.length) stop(true);
+  });
+}
+const playBtn = document.getElementById("play");
+function stop(finished) { clearInterval(timer); timer = null; playBtn.textContent = finished ? "Replay" : "Play one keyword"; if (finished) i = 0; }
+playBtn.addEventListener("click", () => {
+  if (timer) { stop(); return; }
+  if (i === 0 || i >= STEPS.length) i = 0;
+  playBtn.textContent = "Pause"; step();
+  timer = setInterval(step, reduce ? 700 : 1300);
+});
+document.getElementById("step").addEventListener("click", () => { if (timer) stop(); if (i >= STEPS.length) i = 0; step(); });
+document.getElementById("reset").addEventListener("click", () => { stop(); i = 0; clearMarks(); consoleEl.innerHTML = '<span class="empty">Press Play or Step to start.</span>'; select("checks"); });
+</script>
+
+</html>

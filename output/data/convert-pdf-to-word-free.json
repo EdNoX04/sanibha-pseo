@@ -1,0 +1,208 @@
+{
+  "record": {
+    "keyword": "convert PDF to Word free",
+    "app_id": "doc-scanner",
+    "slug": "convert-pdf-to-word-free",
+    "tokens": [
+      "convert",
+      "pdf",
+      "word",
+      "free"
+    ],
+    "platform": "any",
+    "wants_free": true,
+    "intent_guess": "conversion",
+    "action": "convert",
+    "source_format": "pdf",
+    "target_format": "word",
+    "candidate_features": [
+      "ocr",
+      "word_export"
+    ],
+    "cluster_id": 0,
+    "siblings": [
+      "compress-pdf-file-size-free",
+      "best-free-pdf-scanner-app",
+      "sign-pdf-on-iphone-free"
+    ],
+    "merged_keywords": []
+  },
+  "brief": {
+    "slug": "convert-pdf-to-word-free",
+    "intent_type": "conversion",
+    "searcher_goal": "Convert a PDF file into an editable Microsoft Word document (.docx) without paying for software or exposing sensitive data.",
+    "scenario": "A user received a contract, syllabus, or report as a PDF on their iPhone and needs to edit the body text in Word, but wants to know what options are genuinely free versus paid before committing.",
+    "unique_angle": "Transparent breakdown of free versus paid conversion options: shows how free on-device OCR extracts plain text (.txt) at zero cost, explains genuinely free desktop or web workarounds (Google Docs, existing desktop Word licences), and clarifies that direct .docx export with preserved layout is a Pro feature in the app.",
+    "must_answer": [
+      "Is converting a PDF to an editable Word (.docx) file free in Document Scanner & PDF Toolkit, or is it a Pro feature?",
+      "Can you extract text from a scanned or digital PDF for free using the app's on-device OCR?",
+      "How can you convert a PDF into an editable document for free using Google Docs or an existing desktop Word licence?",
+      "What are the privacy risks of uploading confidential PDFs to free online conversion websites?",
+      "Does converting a PDF or scan to Word preserve paragraphs and document formatting?"
+    ],
+    "exclusions": [
+      {
+        "topic": "Extracting text from photos or scanned images directly to clipboard or .txt",
+        "owner_slug": "convert-scanned-image-to-text"
+      },
+      {
+        "topic": "Compressing large PDF files for email attachments",
+        "owner_slug": "compress-pdf-file-size-free"
+      },
+      {
+        "topic": "Using built-in iOS Notes or Files to scan documents without third-party apps",
+        "owner_slug": "scan-document-without-an-app"
+      }
+    ],
+    "feature_ids": [
+      "word_export",
+      "ocr",
+      "privacy_ondevice",
+      "share_export"
+    ],
+    "platform_fact_ids": [
+      "google_docs_pdf",
+      "word_open_pdf",
+      "online_converters"
+    ],
+    "related_slugs": [
+      "convert-scanned-image-to-text",
+      "best-free-pdf-scanner-app",
+      "compress-pdf-file-size-free"
+    ],
+    "ambiguity_note": "The user might want a fully formatted .docx file or might simply need the raw text to paste into an editor. The page addresses both needs: plain text extraction via free on-device OCR (.txt) versus full .docx export (Pro feature), plus external free alternatives."
+  },
+  "content": {
+    "title": "Convert PDF to Word Free: Safe Methods and Options",
+    "meta_description": "Learn how to convert PDF to Word for free using Google Docs or desktop Word, extract text on iOS, and when full .docx export requires a paid upgrade.",
+    "h1": "How to Convert PDF to Word for Free or On iOS",
+    "quick_answer": "To convert a PDF to Word for free, upload it to Google Drive and open it with Google Docs, or open the PDF directly in desktop Word if you already have a licence. Document Scanner & PDF Toolkit offers free on-device text extraction, while direct .docx export with preserved formatting is a Pro feature.",
+    "intro": [
+      "You have a contract, syllabus, or report saved as a PDF on your iPhone, and you need to edit the body text in Microsoft Word. Finding a conversion method that does not force you into hidden subscriptions or alter your layout unexpectedly can take time.",
+      "Many web tools promise free conversions but upload your documents to third-party servers, creating privacy risks for sensitive files. Other apps advertise free downloads only to block file exports completely.",
+      "This guide explains the genuinely free desktop and cloud options available, how free on-device text extraction works, and how to export directly to Word using Document Scanner & PDF Toolkit."
+    ],
+    "steps_heading": "How to Convert a PDF to Word with Document Scanner & PDF Toolkit",
+    "steps": [
+      {
+        "title": "Open your PDF document in the app",
+        "detail": "Open Document Scanner & PDF Toolkit on your iPhone or iPad and import your PDF file. Check that all pages display in the correct order before starting the conversion process."
+      },
+      {
+        "title": "Process the text layer with on-device OCR",
+        "detail": "For scanned pages, the app automatically applies on-device text recognition. Make sure the original scan is clear and legible so the OCR engine detects words accurately."
+      },
+      {
+        "title": "Select the Export to Word (.docx) option",
+        "detail": "Choose the Word export function to turn the PDF into an editable .docx file. Note that exporting directly to .docx is a Pro feature (in-app purchase) that retains paragraphs and basic document formatting."
+      },
+      {
+        "title": "Save or share your editable document",
+        "detail": "Choose whether to share your new .docx file via AirDrop or Mail, save it directly to Files, or send it to cloud storage like iCloud Drive, Google Drive, or Dropbox for desktop editing."
+      }
+    ],
+    "alternatives_heading": "Free Alternatives for Converting PDF to Word",
+    "alternatives": [
+      {
+        "method": "Google Docs via Google Drive",
+        "how": "Upload your PDF to Google Drive on a web browser, right-click the uploaded file, and select Open with > Google Docs.",
+        "best_for": "Clean, printed documents where you only need to edit raw text without strict formatting needs.",
+        "limitation": "Formatting is often lost during the conversion, and complex page elements like tables or multi-column layouts will not convert cleanly."
+      },
+      {
+        "method": "Microsoft Word Desktop App",
+        "how": "Launch Microsoft Word on your computer, choose File > Open, and select your PDF file. Word automatically converts it into an editable document.",
+        "best_for": "Users who already possess an active Microsoft office suite and need reasonable layout retention.",
+        "limitation": "Requires a paid Microsoft 365 or Office licence, so it is only free if you already own one, and complex layouts may not convert exactly."
+      },
+      {
+        "method": "Free Online File Converters",
+        "how": "Upload the PDF to a third-party file conversion website in your web browser and download the generated Word file.",
+        "best_for": "Non-confidential documents when you do not have Google Docs or a desktop Word installation.",
+        "limitation": "Requires uploading the document to a third-party server, which creates data privacy risks for IDs, contracts, and financial records, and free tiers often limit file size or daily use."
+      }
+    ],
+    "features_heading": "App Features for PDF and Document Conversion",
+    "feature_points": [
+      {
+        "feature_id": "word_export",
+        "benefit": "Converts a PDF or scan into an editable Word document while keeping paragraphs and basic formatting using the OCR layer (Pro feature)."
+      },
+      {
+        "feature_id": "ocr",
+        "benefit": "Extracts printed text on scans and documents on-device for free, allowing you to copy the raw text to your clipboard or export it as a .txt file without paying."
+      },
+      {
+        "feature_id": "privacy_ondevice",
+        "benefit": "Runs scanning, text recognition, and file processing entirely on your iPhone, ensuring confidential contracts and legal forms are never uploaded to remote servers."
+      },
+      {
+        "feature_id": "share_export",
+        "benefit": "Lets you immediately move your exported files to Mail, AirDrop, Files, iCloud Drive, Google Drive, or Dropbox to continue editing across platforms."
+      }
+    ],
+    "tips_heading": "Tips for Better PDF to Word Conversion Results",
+    "tips": [
+      "If you only need the text content rather than layout preservation, use the app's free on-device OCR to export a .txt file instead of purchasing a .docx export tool.",
+      "For scanned paper documents, ensure the page has strong contrast and sharp text; clean printed typography converts with much higher accuracy than handwriting.",
+      "Always review converted documents for layout shifts, as multi-column sections, headers, and text boxes frequently move when converting between PDF and Word across any platform.",
+      "If you need to compress large PDF files before converting or sharing them, see our dedicated guide on PDF compression rather than relying on converter settings."
+    ],
+    "faqs": [
+      {
+        "question": "Is converting a PDF to an editable Word (.docx) file free in Document Scanner & PDF Toolkit?",
+        "answer": "No. Exporting to an editable Word (.docx) document is a Pro feature available via in-app purchase. Core features like scanning, editing, merging, signing, compressing, and extracting plain text via OCR are completely free."
+      },
+      {
+        "question": "Can you extract text from a PDF for free using the app's on-device OCR?",
+        "answer": "Yes. The app includes free on-device text recognition (OCR) for printed text. You can copy the recognised text directly to your clipboard or export it as a plain .txt file without upgrading to Pro."
+      },
+      {
+        "question": "How can you convert a PDF into an editable document for free using Google Docs?",
+        "answer": "Upload the PDF to Google Drive on a computer, right-click the file, and select Open with > Google Docs. Google Docs extracts the text into an editable document, though formatting is often lost."
+      },
+      {
+        "question": "Can I convert a PDF using desktop Microsoft Word for free?",
+        "answer": "Microsoft Word for desktop can open a PDF directly and convert it into an editable document. However, desktop Word requires a paid Microsoft 365 or Office licence, so this method is only free if you already have one."
+      },
+      {
+        "question": "What are the privacy risks of uploading confidential PDFs to free online converter websites?",
+        "answer": "Free online converters require sending your document to a third-party server for processing. This presents significant privacy concerns for contracts, financial statements, and IDs, and free tiers frequently restrict daily conversion counts or file sizes."
+      },
+      {
+        "question": "Does converting a PDF or scan to Word preserve paragraphs and document formatting?",
+        "answer": "Document Scanner & PDF Toolkit preserves paragraphs and basic formatting when exporting to Word (.docx), using an OCR layer on scanned pages. With simple tools like Google Docs, document formatting is often lost."
+      }
+    ],
+    "cta": {
+      "heading": "Process and Convert Documents on iPhone",
+      "text": "Extract text for free with on-device OCR, or use Document Scanner & PDF Toolkit Pro to export cleanly formatted Word (.docx) documents directly from your device."
+    }
+  },
+  "qa": {
+    "passed": true,
+    "errors": [],
+    "warnings": [],
+    "metrics": {
+      "words": 1078,
+      "keyword_coverage": 1.0,
+      "max_jaccard": 0.0102,
+      "max_jaccard_with": "sign-pdf-on-iphone-free",
+      "max_cosine": 0.8987,
+      "max_cosine_with": "best-free-pdf-scanner-app",
+      "shared_sentences": 0,
+      "writer_model": "gemini-3.8-flash",
+      "judge_model": "gemini-3.5-flash"
+    },
+    "overlaps": []
+  },
+  "judge": {
+    "specificity": 5,
+    "usefulness": 5,
+    "accuracy_risk": 5,
+    "swap_test": "pass",
+    "problems": []
+  },
+  "attempts": 1,
+  "input_hash": "0b3852dacf64fe7e"
+}
